@@ -1,14 +1,16 @@
 import Base from '../util/Base';
 import store from '../store/index';
 import util from '../util/util';
+import { changeLayer } from '../store/action';
 
 
 class Item {
-    constructor(layer, clearAllActive) {
+    constructor(layer, clearAllActive, changeLayer) {
         this.layer = layer;
         this.ref = this.render();
         this.isActive = false;
         this.clearAllActive = clearAllActive;
+        this.changeLayer = changeLayer;
     }
 
     render() {
@@ -34,6 +36,7 @@ class Item {
         root.addEventListener('click', function () {
             that.clearAllActive();
             that.active();
+            store.dispatch(changeLayer(that.layer));
         })
         stamp.src = util.generateStamp(this.layer.image);
         return root;
@@ -56,6 +59,7 @@ class LayerInfo extends Base{
         this.ref = this.render();    
         this.layerInfoItems = [];
         this.clearAllActive = this.clearAllActive.bind(this);
+        this.changeLayer = this.changeLayer.bind(this);
     }
 
     render() {
@@ -78,7 +82,7 @@ class LayerInfo extends Base{
     }
 
     addLayer(layer) {
-        let item = new Item(layer, this.clearAllActive);
+        let item = new Item(layer, this.clearAllActive, this.changeLayer);
         this.clearAllActive();
         item.active();
         this.layerInfoItems.push(item);

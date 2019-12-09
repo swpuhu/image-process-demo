@@ -21,6 +21,7 @@ export default function (state, action) {
             style.position_y2 = style.position_y1 + (action.payload.height) / state.height;
             action.payload.style = style;
             state.layers.push(action.payload);
+            state.currentLayer = [action.payload];
             drawingBoard.addCanvas(action.payload);
             layerInfo.addLayer(action.payload);
             break;
