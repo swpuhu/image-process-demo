@@ -1,0 +1,113 @@
+.toolbox {
+  top: 35px;
+  left: 10px;
+  width: 100px;
+  min-height: 500px;
+  font-size: 12px;
+  border: 1px solid #000;
+  overflow: hidden;
+}
+.toolbox .toolbox-caption {
+  padding: 5px;
+  border-bottom: 1px solid #000;
+}
+.toolbox .toolbox-body {
+  padding: 5px;
+}
+.toolbox .toolbox-icon {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 5px;
+  background-color: #2f2f2f;
+  text-align: center;
+}
+.toolbox .toolbox-icon.active {
+  background-color: #3b97ec;
+}
+body {
+  margin: 0;
+  background-color: #4e4e4e;
+  color: #fff;
+  cursor: default;
+}
+canvas {
+  background-color: transparent;
+}
+.hide {
+  display: none;
+}
+.absolute {
+  position: absolute;
+}
+.vertical-align {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.top {
+  top: 0;
+}
+.left {
+  left: 0;
+}
+.flex {
+  display: flex;
+  align-items: center;
+}
+.header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 28px;
+  border-bottom: 1px solid #000;
+  box-sizing: border-box;
+}
+.header .menu-droplist {
+  width: 100px;
+  margin-top: 5px;
+  border: 1px solid #2e2e2e;
+  box-shadow: 1px 1px 2px 1px #000;
+  background-color: #4e4e4e;
+  z-index: 999999;
+}
+.main {
+  position: absolute;
+  top: 28px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  right: 200px;
+}
+.main .drawing-board {
+  font-size: 0;
+  box-shadow: 0 0 5px 1px #000;
+}
+.info {
+  position: absolute;
+  top: 28px;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  border-left: 1px solid #000;
+}
+.info .layer-info {
+  height: 500px;
+  overflow-y: auto;
+}
+.info .layer-info .layer-item {
+  margin: 10px 0 10px 5px;
+}
+.info .layer-info .layer-item.active {
+  background-color: #3b97ec;
+}
+.info .layer-info .layer-item__title {
+  flex: 1;
+  padding-left: 10px;
+  height: 20px;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

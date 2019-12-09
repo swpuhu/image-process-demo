@@ -2,5 +2,7 @@ export default {
     layers: [],
     width: 0,
     height: 0,
-    zoom: 1
+    zoom: 1,
+    currentTool: null,
+    currentLayers: []
 }

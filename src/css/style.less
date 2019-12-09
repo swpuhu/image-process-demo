@@ -92,6 +92,9 @@ canvas {
         overflow-y: auto;
         .layer-item {
             margin: 10px 0 10px 5px;
+            &.active {
+                background-color: @layerItemActiveColor;
+            }
         }
         .layer-item__title {
             flex: 1;

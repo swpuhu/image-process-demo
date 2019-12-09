@@ -1,0 +1,27 @@
+.toolbox {
+  top: 35px;
+  left: 10px;
+  width: 100px;
+  min-height: 500px;
+  font-size: 12px;
+  border: 1px solid #000;
+  overflow: hidden;
+}
+.toolbox .toolbox-caption {
+  padding: 5px;
+  border-bottom: 1px solid #000;
+}
+.toolbox .toolbox-body {
+  padding: 5px;
+}
+.toolbox .toolbox-icon {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 5px;
+  background-color: #2f2f2f;
+  text-align: center;
+}
+.toolbox .toolbox-icon.active {
+  background-color: #3b97ec;
+}

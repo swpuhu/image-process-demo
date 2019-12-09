@@ -52,8 +52,8 @@ export default class RenderContext {
     }
 
     render(layer) {
-        let imageWidth = layer.layer.width;
-        let imageHeight = layer.layer.height;
+        let imageWidth = layer.width;
+        let imageHeight = layer.height;
         let offsetX = (store.state.width - imageWidth) / 2;
         let offsetY = (store.state.height - imageHeight) / 2;
         let points = [
@@ -72,7 +72,7 @@ export default class RenderContext {
         this.gl.useProgram(this.filters.normal.program);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.originTexture);
-        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.layer.image);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
         for (let step of layer.steps) {
 
         }

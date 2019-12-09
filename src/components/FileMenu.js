@@ -21,6 +21,7 @@ export default class FileMenu extends Base {
                     height: image.height,
                     image: image,
                     name: util.deletePostfix(file.name),
+                    steps: []
                 };
                 let zoomX = image.width / (window.innerWidth - 100);
                 let zoomY = image.height / (window.innerHeight - 100);
