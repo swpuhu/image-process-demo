@@ -1,14 +1,16 @@
 import Header from './container/Header';
 import Main from './container/Main';
+import Toolbox from './container/Toolbox';
+
 import util from './util/util';
 import './css/style.less';
-import './css/header.less';
 import Info from './container/Info';
 export default class App {
     constructor() {
         let header = new Header();
         let main = new Main();
         let info = new Info();
+        let toolbox = new Toolbox();
         let template = {
             tagName: 'div',
             classList: ['my-app'],
@@ -21,6 +23,9 @@ export default class App {
                 },
                 {
                     component: info
+                },
+                {
+                    component: toolbox
                 }
             ]
         }

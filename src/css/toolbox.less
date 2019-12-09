@@ -1,0 +1,28 @@
+@import './variables.less';
+
+@iconColor: #2f2f2f;
+
+.toolbox {
+    top: 35px;
+    left: 10px;
+    width: 100px;
+    min-height: 500px;
+    font-size: @small-font;
+    border: 1px solid @borderColor;
+    overflow: hidden;
+    .toolbox-caption {
+        padding: 5px;
+        border-bottom: 1px solid @borderColor;
+    }
+    .toolbox-body {
+        padding: 5px;
+    }
+    .toolbox-icon {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 5px;
+        background-color: @iconColor;
+        text-align: center;
+    }
+}

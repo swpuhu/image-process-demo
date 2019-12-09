@@ -1,10 +1,10 @@
-@headerHeight: 28px;
-@rightInfoWidth: 200px;
-@borderColor: #000;
+@import './variables.less';
+@import './toolbox.less';
+
 
 body {
     margin: 0;
-    background-color: #4e4e4e;
+    background-color: @backgroundColor;
     color: #fff;
     cursor: default;
 }
@@ -53,6 +53,14 @@ canvas {
     height: @headerHeight;
     border-bottom: 1px solid @borderColor;
     box-sizing: border-box;
+    .menu-droplist {
+        width: 100px;
+        margin-top: 5px;
+        border: 1px solid #2e2e2e;
+        box-shadow: 1px 1px 2px 1px #000;
+        background-color: @backgroundColor;
+        z-index: 999999;
+    }
 }
 
 

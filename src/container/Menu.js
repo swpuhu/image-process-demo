@@ -1,6 +1,5 @@
 import Base from '../util/Base';
 import util from '../util/util';
-import '../css/menu.less'
 
 
 class Item {
