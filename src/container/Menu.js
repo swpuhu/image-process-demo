@@ -1,6 +1,6 @@
 import Base from '../util/Base';
 import util from '../util/util';
-
+import FileMenu from '../components/FileMenu';
 
 class Item {
     constructor(text, onclick) {
@@ -17,30 +17,28 @@ class Item {
 export default class Menu extends Base {
     constructor(props, className) {
         super();
-        let dropListTemplate = {
-            tagName: 'div',
-            classList: ['menu-droplist', 'absolute', 'hide'],
-            children: [],
-            ref: 'dropList'
-        }
         let template = {
             tagName: 'div',
-            classList: ['menu', className],
+            classList: ['menu'],
             children: [
                 {
                     tagName: 'div',
-                    classList: ['menu-title'],
-                    text: '文件',
-                    ref: 'title'
-                },
-                dropListTemplate
+                    classList: ['file-menu'],
+                    children: [
+                        {
+                            tagName: 'div',
+                            classList: ['menu-title'],
+                            text: '文件',
+                            ref: 'title'
+                        },
+                        {
+                            component: new FileMenu(),
+                            ref: 'dropList'
+                        }
+
+                    ]
+                }
             ]
-        }
-        for (let prop of props) {
-            let item = new Item(prop.name, prop.callback);
-            dropListTemplate.children.push({
-                component: item
-            });
         }
         let {root, title, dropList} = util.generateDOM(template);
         this.ref = root;

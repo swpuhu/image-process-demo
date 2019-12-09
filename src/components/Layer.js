@@ -19,4 +19,8 @@ export default class Layer extends Base {
     render(layer) {
         this.renderContext.render(layer);
     }
+
+    remove() {
+        this.ref.remove();
+    }
 }

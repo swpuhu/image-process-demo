@@ -29,6 +29,14 @@ export default class App {
                 }
             ]
         }
+
+        document.onselectstart = function (e) {
+            return false;
+        }
+
+        document.oncontextmenu = function (e) {
+            e.preventDefault();
+        }
         this.ref = util.generateDOM(template).root;
     }
 }

@@ -35,6 +35,9 @@ function generateDOM(t) {
         let dom;
         if (current.template.component) {
             dom = current.template.component.ref;
+            if (current.template.ref) {
+                refs[current.template.ref] = dom;
+            }
         } else {
             dom = createElement(current.template.tagName, current.template.classList, current.template.text, current.template.title);
             if (current.template.ref) {

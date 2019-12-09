@@ -1,6 +1,8 @@
 import NormalFilter from './filter/Normal';
 import util from './util';
 import store from '../store/index';
+import StepType from '../Enum/StepType';
+
 
 export default class RenderContext {
     /**
@@ -69,14 +71,17 @@ export default class RenderContext {
             points[i + 1] += offsetY;
         }
         points = new Float32Array(points);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.useProgram(this.filters.normal.program);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.originTexture);
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
         for (let step of layer.steps) {
-
+            if (step.type === StepType.MOVE) {
+                this.filters.normal.setTranslate(step.offsetX, step.offsetY);
+            }
         }
-
+        
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
     }
 }

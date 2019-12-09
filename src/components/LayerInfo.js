@@ -2,7 +2,7 @@ import Base from '../util/Base';
 import store from '../store/index';
 import util from '../util/util';
 import { changeLayer } from '../store/action';
-
+import LayerContextMenu from './LayerContextMenu';
 
 class Item {
     constructor(layer, clearAllActive, changeLayer) {
@@ -51,6 +51,10 @@ class Item {
         this.isActive = false;
         this.ref.classList.remove('active');
     }
+
+    remove() {
+        this.ref.remove();
+    }
 }
 
 class LayerInfo extends Base{
@@ -60,6 +64,7 @@ class LayerInfo extends Base{
         this.layerInfoItems = [];
         this.clearAllActive = this.clearAllActive.bind(this);
         this.changeLayer = this.changeLayer.bind(this);
+        this.contextMenu = new LayerContextMenu();
     }
 
     render() {
@@ -73,7 +78,13 @@ class LayerInfo extends Base{
                 component: new Item(store.state.layers[i])
             })
         }
-        return util.generateDOM(template).root;
+        let root = util.generateDOM(template).root;
+        let that = this;
+        root.addEventListener('contextmenu', function (e) {
+            that.contextMenu.show(e);
+        })
+
+        return root;
     }
 
 
@@ -87,6 +98,15 @@ class LayerInfo extends Base{
         item.active();
         this.layerInfoItems.push(item);
         this.ref.appendChild(item.ref);
+    }
+
+    deleteLayer(layer) {
+        let index = this.layerInfoItems.findIndex(item => item.layer === layer);
+        if (index > -1) {
+            let deletedLayer = this.layerInfoItems.splice(index, 1)[0];
+            deletedLayer.remove();
+            deletedLayer = null;
+        }
     }
 
     changeLayer(layer) {

@@ -1,18 +1,18 @@
 import Base from '../util/Base';
 import util from '../util/util';
-import FileMenu from '../components/FileMenu';
+import Menu from '../container/Menu';
 
 
 export default class Header extends Base{
     constructor () {
         super();
-        let fileMenu = new FileMenu();
+        let menu = new Menu();
         let template = {
             tagName: 'div',
             classList: ['header'],
             children: [
                 {
-                    component: fileMenu
+                    component: menu
                 }
             ]
         }

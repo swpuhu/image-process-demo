@@ -4,5 +4,5 @@ export default {
     height: 0,
     zoom: 1,
     currentTool: null,
-    currentLayers: []
+    currentLayer: []
 }

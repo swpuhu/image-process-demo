@@ -1,4 +1,3 @@
-import state from './state';
 import {ActionType, openFile}from './action'
 import DrawingBoard from '../container/DrawingBoard';
 import LayerInfo from '../components/LayerInfo';
@@ -35,6 +34,24 @@ export default function (state, action) {
         case ActionType.CHANGE_LAYER:
             state.currentLayer = [action.payload];
             layerInfo.changeLayer(action.payload);
+            break;
+        case ActionType.DELETE_LAYER:
+            let index = state.layers.indexOf(action.payload);
+            if (index > -1) {
+                state.layers.splice(index, 1);
+                state.currentLayer = [];
+                drawingBoard.deleteCanvas(action.payload);
+                layerInfo.deleteLayer(action.payload);
+            } else {
+                let deletedLayer = state.currentLayer[0];
+                index = state.layers.indexOf(deletedLayer);
+                if (index > -1) {
+                    state.layers.splice(index, 1);
+                    state.currentLayer = [];
+                    drawingBoard.deleteCanvas(deletedLayer);
+                    layerInfo.deleteLayer(deletedLayer);
+                }
+            }
             break;
         default:
             

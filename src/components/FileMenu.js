@@ -8,6 +8,18 @@ import {
 } from '../store/action';
 import util from '../util/util';
 
+class Item {
+    constructor(text, onclick) {
+        let template = {
+            tagName: 'div',
+            classList: ['menu-item'],
+            text: text
+        }
+        this.ref = util.generateDOM(template).root;
+        this.ref.addEventListener('click', onclick);
+    }
+}
+
 
 class FileMenu extends Base {
     constructor() {
@@ -20,27 +32,12 @@ class FileMenu extends Base {
             that.openFiles(this.files);
             input.value = null;
         }
+        this.input = input;
+        this.ref = this.render();
+    }
 
-        let menu = new Menu([{
-                name: '打开文件',
-                callback: function () {
-                    input.click();
-                }
-            },
-            {
-                name: '保存',
-                callback: function () {
-                    console.log('save')
-                }
-            },
-            {
-                name: '另存为',
-                callback: function () {
-                    console.log('save as');
-                }
-            }
-        ], 'file-menu');
-        this.ref = menu.ref;
+    openFileByClick() {
+        this.input.click();
     }
 
 
@@ -73,6 +70,26 @@ class FileMenu extends Base {
         }
 
     }
+
+    render() {
+        let that = this;
+        let openFile = new Item('打开文件', function () {
+                that.openFileByClick();
+            });
+        let template = {
+            tagName: 'div',
+            classList: ['menu-droplist', 'hide'],
+            children: [
+                {
+                    component: openFile
+                }
+            ]
+        }
+        let root = util.generateDOM(template).root;
+        return root;
+    }
+
+        
 }
 
 export default util.getSingleton(FileMenu);
