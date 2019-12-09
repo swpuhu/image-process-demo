@@ -16,7 +16,7 @@ function generateDOM(t) {
             doc.textContent = text;
         }
 
-        
+
         if (title) {
             doc.title = title;
         }
@@ -65,7 +65,7 @@ function generateDOM(t) {
 }
 
 
-function getSingleton (fn) {
+function getSingleton(fn) {
     let ret;
     return function () {
         if (ret) {
@@ -89,7 +89,7 @@ const generateStamp = (function () {
         }
         context.drawImage(image, 0, 0, width, height);
         return canvas.toDataURL();
-        
+
     }
 }());
 

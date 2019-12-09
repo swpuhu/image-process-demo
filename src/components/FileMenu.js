@@ -1,17 +1,52 @@
 import Base from '../util/Base';
 import Menu from '../container/Menu';
 import store from '../store/index';
-import { openFile, changeZoom, ActionType } from '../store/action';
+import {
+    openFile,
+    changeZoom,
+    ActionType
+} from '../store/action';
 import util from '../util/util';
 
 
-export default class FileMenu extends Base {
+class FileMenu extends Base {
     constructor() {
         super();
         let input = document.createElement('input');
         input.type = 'file';
+        input.multiple = true;
+        let that = this;
         input.onchange = function () {
-            let file = this.files[0];
+            that.openFiles(this.files);
+            input.value = null;
+        }
+
+        let menu = new Menu([{
+                name: '打开文件',
+                callback: function () {
+                    input.click();
+                }
+            },
+            {
+                name: '保存',
+                callback: function () {
+                    console.log('save')
+                }
+            },
+            {
+                name: '另存为',
+                callback: function () {
+                    console.log('save as');
+                }
+            }
+        ], 'file-menu');
+        this.ref = menu.ref;
+    }
+
+
+    openFiles(files) {
+        for (let file of files) {
+            // let file = this.files[0];
             let url = URL.createObjectURL(file);
             let image = new Image();
             image.onload = function () {
@@ -33,31 +68,11 @@ export default class FileMenu extends Base {
                     store.dispatch(openFile(layer));
                     // store.dispatch(changeZoom(zoom));
                 }
-                input.value = null;
             }
             image.src = url;;
         }
 
-        let menu = new Menu([
-            {
-                name: '打开文件',
-                callback: function () {
-                    input.click();
-                }
-            },
-            {
-                name: '保存',
-                callback: function () {
-                    console.log('save')
-                }
-            },
-            {
-                name: '另存为',
-                callback: function () {
-                    console.log('save as');
-                }
-            }
-        ], 'file-menu');
-        this.ref = menu.ref;
     }
 }
+
+export default util.getSingleton(FileMenu);
