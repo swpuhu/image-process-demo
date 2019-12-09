@@ -10,6 +10,7 @@ class DrawingBoard extends Base {
         this.layers = [];
     }
 
+
     render() {
         let template = {
             tagName: 'div',
@@ -36,6 +37,14 @@ class DrawingBoard extends Base {
         canvas.render(layer);
         this.ref.appendChild(canvas.ref);
     } 
+
+    deleteCanvas(layer) {
+        let index = this.layers.findIndex(item => item.layer === layer);
+        if (index > -1) {
+            let deleteLayer = this.layers.splice(index, 1)[0];
+            deleteLayer.canvas.remove();
+        }
+    }
 
     changeZoom(zoom) {
         
