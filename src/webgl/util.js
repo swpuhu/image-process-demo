@@ -547,6 +547,35 @@ function multiply(a, b) {
     ];
 };
 
+function vecMultipleMat(v, m) {
+    let m00 = m[0 * 4 + 0];
+    let m01 = m[0 * 4 + 1];
+    let m02 = m[0 * 4 + 2];
+    let m03 = m[0 * 4 + 3];
+    let m10 = m[1 * 4 + 0];
+    let m11 = m[1 * 4 + 1];
+    let m12 = m[1 * 4 + 2];
+    let m13 = m[1 * 4 + 3];
+    let m20 = m[2 * 4 + 0];
+    let m21 = m[2 * 4 + 1];
+    let m22 = m[2 * 4 + 2];
+    let m23 = m[2 * 4 + 3];
+    let m30 = m[3 * 4 + 0];
+    let m31 = m[3 * 4 + 1];
+    let m32 = m[3 * 4 + 2];
+    let m33 = m[3 * 4 + 3];
+    let v0 = v[0];
+    let v1 = v[1];
+    let v2 = v[2];
+    let v3 = v[3];
+    return [
+        m00 * v0 + m10 * v1 + m20 * v2 + m30 * v3,
+        m01 * v0 + m11 * v1 + m21 * v2 + m31 * v3,
+        m02 * v0 + m12 * v1 + m22 * v2 + m32 * v3,
+        m03 * v0 + m13 * v1 + m23 * v2 + m33 * v3
+    ];
+}
+
 function inverse(m) {
     var m00 = m[0 * 4 + 0];
     var m01 = m[0 * 4 + 1];
@@ -709,5 +738,6 @@ export default {
     cross,
     subtractVectors,
     lookAt,
-    createFramebufferTexture
+    createFramebufferTexture,
+    vecMultipleMat
 }
