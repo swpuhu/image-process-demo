@@ -148,8 +148,7 @@ class DrawingBoard extends Base {
         let a = document.createElement('a');
         a.download = 'test.png';
         a.href = src;
-        a.click();
-        
+        a.click();   
     }
 
 

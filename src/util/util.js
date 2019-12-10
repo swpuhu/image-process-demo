@@ -1,6 +1,17 @@
 function generateDOM(t) {
-    function createElement(tagName, classList, text, title) {
-        let doc = document.createElement(tagName);
+    function createElement(tagName, isSVG, classList, text, title, attributes) {
+        let doc;
+        if (isSVG) {
+            doc = document.createElementNS('http://www.w3.org/2000/svg', tagName);
+            if (attributes) {
+                for (let key in attributes) {
+                    doc.setAttribute(key, attributes[key]);
+                }
+            }
+        } else {
+            doc = document.createElement(tagName);
+        }
+        
         if (classList) {
 
             if (typeof classList === 'string') {
@@ -30,6 +41,10 @@ function generateDOM(t) {
         template: t
     });
     let refs = {};
+    let isSVG = false;
+    if (t.tagName === 'svg') {
+        isSVG = true;
+    }
     while (queue.length) {
         let current = queue.shift();
         let dom;
@@ -39,7 +54,7 @@ function generateDOM(t) {
                 refs[current.template.ref] = dom;
             }
         } else {
-            dom = createElement(current.template.tagName, current.template.classList, current.template.text, current.template.title);
+            dom = createElement(current.template.tagName, isSVG, current.template.classList, current.template.text, current.template.title, current.template.attributes);
             if (current.template.ref) {
                 refs[current.template.ref] = dom;
             }
