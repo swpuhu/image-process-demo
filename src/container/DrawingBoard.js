@@ -7,6 +7,7 @@ import ToolType from '../Enum/ToolType';
 import {MoveStep} from '../Enum/Step';
 import BlendMode from '../Enum/BlendMode';
 import OffCanvas from '../webgl/OffCanvas';
+import ResizeBox from '../components/ResizeBox';
 
 
 class DrawingBoard extends Base {
@@ -15,6 +16,7 @@ class DrawingBoard extends Base {
         this.ref = this.render();
         this.layers = [];
         this.offCanvas = new OffCanvas(300, 150);
+        this.resizeBox = new ResizeBox(this.ref);
         // document.body.appendChild(this.offCanvas.canvas);
     }
 
@@ -110,7 +112,7 @@ class DrawingBoard extends Base {
         this.layers.forEach(layer => {
             layer.canvas.ref.style.width = width + 'px';
             layer.canvas.ref.style.height = height + 'px';
-        })
+        });
     }
 
     draw(layer) {
@@ -131,6 +133,11 @@ class DrawingBoard extends Base {
             image.src = src;
         })
     }
+
+    showResizeBox(layer) {
+        this.resizeBox.show(layer);
+    }
+    
     async savePicture() {
         let images = [];
         for (let layer of this.layers) {
@@ -145,10 +152,7 @@ class DrawingBoard extends Base {
         }
         this.offCanvas.blendImages(images);
         let src = this.offCanvas.canvas.toDataURL();
-        let a = document.createElement('a');
-        a.download = 'test.png';
-        a.href = src;
-        a.click();   
+        util.downloadBase64(src, 'test.png');
     }
 
 

@@ -76,6 +76,63 @@ canvas {
     .drawing-board {
         font-size: 0;
         box-shadow: 0 0 5px 1px @borderColor;
+
+        .resize-box {
+            border: 1px #fff dashed;
+            transform: translate(0, 0);
+            .resize-point {
+                position: absolute;
+                width: @resizePointerSize;
+                height: 10px;
+                border-radius: 50%;
+                background-color: @resizePointerColor;
+            }
+            .resize-lt {
+                top: 0;
+                left: 0;
+                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));
+            }
+
+            .resize-t {
+                top: 0;
+                left: 50%;
+                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));
+            }
+
+            .resize-rt {
+                top: 0;
+                right: 0;
+                transform: translate(calc(@resizePointerSize / 2), calc(@resizePointerSize / -2));
+            }
+            .resize-r {
+                top: 50%;
+                right: 0;
+                transform: translate(calc(@resizePointerSize / 2), calc(@resizePointerSize / -2));
+            }
+
+            .resize-rd {
+                bottom: 0;
+                right: 0;
+                transform: translate(calc(@resizePointerSize / 2), calc(@resizePointerSize / 2));
+            }
+
+            .resize-d {
+                bottom: 0;
+                left: 50%;
+                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / 2));
+
+            }
+
+            .resize-ld {
+                bottom: 0;
+                left: 0;
+                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / 2));
+            }
+            .resize-l {
+                top: 50%;
+                left: 0;
+                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));}
+        }
     }
 }
 

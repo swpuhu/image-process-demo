@@ -1,7 +1,7 @@
 import Base from '../util/Base';
 import store from '../store/index';
 import util from '../util/util';
-import { deleteLayer } from '../store/action';
+import { deleteLayer, transformLayer} from '../store/action';
 import ContextMenu from '../container/ContextMenu';
 
 export default class LayerContextMenu extends Base {
@@ -15,6 +15,12 @@ export default class LayerContextMenu extends Base {
                     console.log('delete');
                     store.dispatch(deleteLayer());
                     that.hide();
+                }
+            },
+            {
+                name: '自由变换',
+                callback: function () {
+                    store.dispatch(transformLayer())
                 }
             }
         ]);

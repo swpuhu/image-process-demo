@@ -18,7 +18,13 @@ export default function (state, action) {
             style.position_x2 = style.position_x1 + (action.payload.width) / state.width;
             style.position_y1 = (state.height - action.payload.height) / 2 / state.height;
             style.position_y2 = style.position_y1 + (action.payload.height) / state.height;
+            let boundary = {};
+            boundary.minX = style.position_x1;
+            boundary.minY = style.position_y1;
+            boundary.maxX = style.position_x2;
+            boundary.maxY = style.position_y2;
             action.payload.style = style;
+            action.payload.boundary = boundary;
             state.layers.push(action.payload);
             state.currentLayer = [action.payload];
             drawingBoard.addCanvas(action.payload);
@@ -55,6 +61,9 @@ export default function (state, action) {
             break;
         case ActionType.SAVE_PICTURE:
             drawingBoard.savePicture();
+            break;
+        case ActionType.TRANSFORM_LAYER:
+            drawingBoard.showResizeBox(state.currentLayer[0]);
             break;
         default:
             

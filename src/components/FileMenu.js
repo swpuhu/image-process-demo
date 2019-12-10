@@ -1,6 +1,7 @@
 import Base from '../util/Base';
-import Menu from '../container/Menu';
 import store from '../store/index';
+import { MoveStep } from '../Enum/Step';
+import StepType from '../Enum/StepType';
 import {
     openFile,
     changeZoom,
@@ -53,7 +54,9 @@ class FileMenu extends Base {
                     height: image.height,
                     image: image,
                     name: util.deletePostfix(file.name),
-                    steps: []
+                    steps: [
+                        new MoveStep(StepType.MOVE)
+                    ]
                 };
                 let zoomX = image.width / (window.innerWidth - 500);
                 let zoomY = image.height / (window.innerHeight - 100);

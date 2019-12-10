@@ -11,7 +11,7 @@ function generateDOM(t) {
         } else {
             doc = document.createElement(tagName);
         }
-        
+
         if (classList) {
 
             if (typeof classList === 'string') {
@@ -117,9 +117,33 @@ function deletePostfix(filename) {
     return arr[0];
 }
 
+
+function downloadBase64(src, title) {
+    let binStr = atob(src.split(',')[1]),
+        len = binStr.length,
+        arr = new Uint8Array(len);
+
+    for (let i = 0; i < len; i++) {
+        arr[i] = binStr.charCodeAt(i);
+    }
+
+    let blob = new Blob([arr]);
+
+    let a = document.createElement('a');
+    a.download = title;
+    a.href = URL.createObjectURL(blob);
+    a.onclick = function () {
+        requestAnimationFrame(function () {
+            URL.revokeObjectURL(a.href);
+        })
+    }
+    a.click();
+}
+
 export default {
     generateDOM,
     getSingleton,
     generateStamp,
-    deletePostfix
+    deletePostfix,
+    downloadBase64
 }
