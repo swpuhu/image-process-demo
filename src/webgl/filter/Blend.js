@@ -1,7 +1,7 @@
 import glUtil from '../util';
+import BlendMode from '../../Enum/BlendMode';
 
-
-export default class NormalFilter {
+export default class BlendFilter {
     /**
      * 
      * @param {WebGL2RenderingContext|WebGLRenderingContext} gl 
@@ -12,21 +12,29 @@ export default class NormalFilter {
         attribute vec2 a_texCoord;
         varying vec2 v_texCoord;
         uniform mat4 u_projection;
-        uniform mat4 u_translate;
-        uniform mat4 u_scale;
-        uniform mat4 u_rotate;
         void main () {
-            gl_Position = u_projection * u_translate * u_scale * u_rotate * a_position;
+            gl_Position = u_projection * a_position;
             v_texCoord = a_texCoord;
         }
         `;
 
         const fragmentShader = `
         precision mediump float;
-        uniform sampler2D u_texture;
+        uniform sampler2D u_src_texture;
+        uniform sampler2D u_dst_texture;
+        uniform float u_blend_type;
         varying vec2 v_texCoord;
         void main () {
-            gl_FragColor = texture2D(u_texture, v_texCoord);
+            vec4 src_color = texture2D(u_src_texture, v_texCoord);
+            vec4 dst_color = texture2D(u_dst_texture, v_texCoord);
+            if (u_blend_type == 0.0) {
+                // 正常混合模式
+                gl_FragColor = vec4(dst_color.rgb * dst_color.a + src_color.rgb * (1.0 - dst_color.a), src_color.a + dst_color.a);
+            } else if (u_blend_type == 1.0) {
+                
+            }
+            // gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+
         }
         `;
         let program = glUtil.initWebGL(gl, vertexShader, fragmentShader);
@@ -38,18 +46,6 @@ export default class NormalFilter {
         let u_projection = gl.getUniformLocation(program, 'u_projection');
         gl.uniformMatrix4fv(u_projection, false, projectionMat);
 
-        let u_translate = gl.getUniformLocation(program, 'u_translate');
-        let u_scale = gl.getUniformLocation(program, 'u_scale');
-        let u_rotate = gl.getUniformLocation(program, 'u_rotate');
-
-
-        let translateMat = glUtil.createTranslateMatrix(0, 0, 0);
-        let scaleMat = glUtil.createScaleMatrix(1, 1, 1, {x: gl.canvas.width / 2, y: gl.canvas.height / 2, z: 1});
-        let rotateMat = glUtil.createRotateMatrix({x: gl.canvas.width / 2, y: gl.canvas.height / 2}, 0);
-
-        gl.uniformMatrix4fv(u_translate, false, translateMat);
-        gl.uniformMatrix4fv(u_scale, false, scaleMat);
-        gl.uniformMatrix4fv(u_rotate, false, rotateMat);
         
         gl.enableVertexAttribArray(a_position);
         gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, 0);
@@ -57,13 +53,29 @@ export default class NormalFilter {
         gl.enableVertexAttribArray(a_texCoord);
         gl.vertexAttribPointer(a_texCoord, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, Float32Array.BYTES_PER_ELEMENT * 2);
 
+        const u_src_texture = gl.getUniformLocation(program, 'u_src_texture');
+        gl.uniform1i(u_src_texture, 1);
+        const u_dst_texture = gl.getUniformLocation(program, 'u_dst_texture');
+        gl.uniform1i(u_dst_texture, 2);
+
+
+        const u_blend_type = gl.getUniformLocation(program, 'u_blend_type');
+        gl.uniform1f(u_blend_type, 0);
         this.a_position = a_position;
-        this.u_translate = u_translate;
-        this.translateMat = translateMat;
-        this.u_projection = u_projection;
         this.program = program;
+        this.u_blend_type = u_blend_type;
+        this.u_projection = u_projection;
         this.gl = gl;
     }
+
+
+    setBlendType(type) {
+        if (type === BlendMode.NORMAL) {
+            type = 0;
+            this.gl.uniform1f(this.u_blend_type, type);
+        }
+    }
+
 
 
     enableVertexArray(size, stride, offset) {
@@ -71,17 +83,9 @@ export default class NormalFilter {
         this.gl.vertexAttribPointer(this.a_position, size, this.gl.FLOAT, false, stride, offset);
     }
 
-
-    setTranslate(x, y) {
-        let translateMat = glUtil.createTranslateMatrix(x, y, 0);
-        this.gl.uniformMatrix4fv(this.u_translate, false, translateMat);
-    }
-
     viewport(projectionMat) {
         this.gl.useProgram(this.program);
         this.gl.uniformMatrix4fv(this.u_projection, false, projectionMat);
     }
-
-
 
 } 

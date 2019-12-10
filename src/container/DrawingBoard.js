@@ -5,12 +5,17 @@ import store from '../store/index';
 import StepType from '../Enum/StepType';
 import ToolType from '../Enum/ToolType';
 import {MoveStep} from '../Enum/Step';
+import BlendMode from '../Enum/BlendMode';
+import OffCanvas from '../webgl/OffCanvas';
+
 
 class DrawingBoard extends Base {
     constructor() {
         super();
         this.ref = this.render();
         this.layers = [];
+        this.offCanvas = new OffCanvas(300, 150);
+        // document.body.appendChild(this.offCanvas.canvas);
     }
 
 
@@ -40,8 +45,8 @@ class DrawingBoard extends Base {
                 for (let layer of layers) {
                     let lastStep = layer.steps[layer.steps.length - 1];
                     if (lastStep && lastStep.type === StepType.MOVE) {
-                        lastStep.offsetX += (e.movementX);
-                        lastStep.offsetY -= e.movementY;
+                        lastStep.offsetX += (e.movementX * store.state.zoom);
+                        lastStep.offsetY -= (e.movementY * store.state.zoom);
                     } else {
                         let newStep = new MoveStep(StepType.MOVE, offsetX, offsetY);
                         layer.steps.push(newStep);
@@ -99,6 +104,7 @@ class DrawingBoard extends Base {
 
         let width = ~~(store.state.width / zoom);
         let height = ~~(store.state.height / zoom);
+        this.offCanvas.changeZoom(store.state.width, store.state.height);
         this.ref.style.width = width + 'px';
         this.ref.style.height = height + 'px'
         this.layers.forEach(layer => {
@@ -115,7 +121,34 @@ class DrawingBoard extends Base {
         }
     }
 
-    savePicture() {
+
+    loadImage(src) {
+        return new Promise((resolve, reject) => {
+            let image = new Image();
+            image.onload = function () {
+                resolve(image);
+            };
+            image.src = src;
+        })
+    }
+    async savePicture() {
+        let images = [];
+        for (let layer of this.layers) {
+            let canvas = layer.canvas;
+            
+            canvas.render(layer.layer);
+            let image = await this.loadImage(canvas.ref.toDataURL());
+            images.push({
+                texture: image,
+                mode: BlendMode.NORMAL
+            })
+        }
+        this.offCanvas.blendImages(images);
+        let src = this.offCanvas.canvas.toDataURL();
+        let a = document.createElement('a');
+        a.download = 'test.png';
+        a.href = src;
+        a.click();
         
     }
 

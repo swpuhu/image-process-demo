@@ -55,9 +55,12 @@ class FileMenu extends Base {
                     name: util.deletePostfix(file.name),
                     steps: []
                 };
-                let zoomX = image.width / (window.innerWidth - 100);
+                let zoomX = image.width / (window.innerWidth - 500);
                 let zoomY = image.height / (window.innerHeight - 100);
                 let zoom = Math.max(zoomX, zoomY);
+                if (zoom < 1) {
+                    zoom = 1;
+                }
                 if (!store.state.layers.length) {
                     store.dispatch(openFile(layer));
                     store.dispatch(changeZoom(zoom));

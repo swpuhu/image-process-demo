@@ -2,6 +2,7 @@ import NormalFilter from './filter/Normal';
 import util from './util';
 import store from '../store/index';
 import StepType from '../Enum/StepType';
+import BlendFilter from './filter/Blend';
 
 
 export default class RenderContext {
@@ -24,7 +25,7 @@ export default class RenderContext {
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-        let width = canvas.width;   
+        let width = canvas.width;
         let height = canvas.height;
 
         let points = new Float32Array([
@@ -43,7 +44,8 @@ export default class RenderContext {
 
         let projectionMat = util.createProjection(width, height, 1);
         let filters = {
-            normal: new NormalFilter(gl, projectionMat)
+            normal: new NormalFilter(gl, projectionMat),
+            blend: new BlendFilter(gl, projectionMat),
         }
 
         let originTexture = util.createTexture(gl);
@@ -84,8 +86,59 @@ export default class RenderContext {
                 this.filters.normal.setTranslate(step.offsetX, step.offsetY);
             }
         }
-        
+
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
         this.cachedImage = true;
+    }
+
+
+    blendLayers(images) {
+        this.gl.useProgram(this.filters.blend.program);
+        let textures = [];
+        let framebuffers = [];
+        util.createFramebufferTexture(this.gl, 2, framebuffers, textures, this.gl.canvas.width, this.gl.canvas.height);
+        let count = 0;
+        let sourceTexture = textures[0];
+        let targetImage;
+        let targetTexture = util.createTexture(this.gl);
+        for (let image of images) {
+            targetImage = image.texture;
+            this.gl.activeTexture(this.gl.TEXTURE2);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, targetTexture);
+            this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, targetImage);
+
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffers[count % 2]);
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+            this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+
+            this.gl.activeTexture(this.gl.TEXTURE1);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[count % 2]);
+            count++;
+        }
+
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+    }
+
+    viewport(x, y, width, height) {
+        this.gl.viewport(x, y, width, height);
+
+        let points = new Float32Array([
+            0.0, 0.0, 0.0, 0.0,
+            width, 0.0, 1.0, 0.0,
+            width, height, 1.0, 1.0,
+            width, height, 1.0, 1.0,
+            0.0, height, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.0
+        ]);
+
+
+        let projectionMat = util.createProjection(width, height, 1);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
+
+        for (let filter in this.filters) {
+            this.filters[filter].viewport(projectionMat);
+        }
+
     }
 }
