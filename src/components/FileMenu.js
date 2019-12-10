@@ -4,7 +4,7 @@ import store from '../store/index';
 import {
     openFile,
     changeZoom,
-    ActionType
+    savePicture
 } from '../store/action';
 import util from '../util/util';
 
@@ -76,12 +76,18 @@ class FileMenu extends Base {
         let openFile = new Item('打开文件', function () {
                 that.openFileByClick();
             });
+        let saveFile = new Item('保存文件', function () {
+            store.dispatch(savePicture());
+        })
         let template = {
             tagName: 'div',
-            classList: ['menu-droplist', 'hide'],
+            classList: ['menu-droplist', 'hide', 'absolute'],
             children: [
                 {
                     component: openFile
+                },
+                {
+                    component: saveFile
                 }
             ]
         }

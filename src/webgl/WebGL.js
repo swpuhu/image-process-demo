@@ -51,8 +51,9 @@ export default class RenderContext {
         this.filters = filters;
         this.gl = gl;
         this.originTexture = originTexture;
-    }
+        this.cachedImage = false;
 
+    }
     render(layer) {
         let imageWidth = layer.width;
         let imageHeight = layer.height;
@@ -75,7 +76,9 @@ export default class RenderContext {
         this.gl.useProgram(this.filters.normal.program);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
         this.gl.bindTexture(this.gl.TEXTURE_2D, this.originTexture);
-        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
+        if (!this.cachedImage) {
+            this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
+        }
         for (let step of layer.steps) {
             if (step.type === StepType.MOVE) {
                 this.filters.normal.setTranslate(step.offsetX, step.offsetY);
@@ -83,5 +86,6 @@ export default class RenderContext {
         }
         
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+        this.cachedImage = true;
     }
 }

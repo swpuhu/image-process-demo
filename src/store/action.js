@@ -4,7 +4,8 @@ export const ActionType = {
     CHANGE_ZOOM: 1,
     CHANGE_TOOL: 2,
     CHANGE_LAYER: 3,
-    DELETE_LAYER: 4
+    DELETE_LAYER: 4,
+    SAVE_PICTURE: 5
 }
 
 export function openFile(layer) {
@@ -40,5 +41,11 @@ export function deleteLayer(layer) {
     return {
         type: ActionType.DELETE_LAYER,
         payload: layer
+    }
+}
+
+export function savePicture() {
+    return {
+        type: ActionType.SAVE_PICTURE
     }
 }

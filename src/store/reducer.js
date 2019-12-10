@@ -53,6 +53,9 @@ export default function (state, action) {
                 }
             }
             break;
+        case ActionType.SAVE_PICTURE:
+            drawingBoard.savePicture();
+            break;
         default:
             
     }

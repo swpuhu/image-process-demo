@@ -22,7 +22,7 @@ class DrawingBoard extends Base {
         let root = util.generateDOM(template).root;
         let that = this;
         let startX, startY;
-
+        let currentWidth, currentHeight;
 
         function mousedown(e) {
             startX = e.clientX;
@@ -34,17 +34,17 @@ class DrawingBoard extends Base {
         function mousemove(e) {
             let offsetX = e.clientX - startX;
             let offsetY = e.clientY - startY;
+            
             let layers = store.state.currentLayer;
             if (store.state.currentTool === ToolType.MOVE) {
                 for (let layer of layers) {
                     let lastStep = layer.steps[layer.steps.length - 1];
                     if (lastStep && lastStep.type === StepType.MOVE) {
-                        lastStep.offsetX += e.movementX;
+                        lastStep.offsetX += (e.movementX);
                         lastStep.offsetY -= e.movementY;
                     } else {
                         let newStep = new MoveStep(StepType.MOVE, offsetX, offsetY);
                         layer.steps.push(newStep);
-
                     }
 
                     let currentLayer = that.layers.find(item => item.layer === layer);
@@ -63,8 +63,7 @@ class DrawingBoard extends Base {
             document.removeEventListener('mouseup', mouseup);
         }
         
-        document.addEventListener('mousedown', mousedown);
-        root.addEventListener('mousedonw', mousedown);
+        root.addEventListener('mousedown', mousedown);
         return root;
     }
 
@@ -114,6 +113,10 @@ class DrawingBoard extends Base {
             let canvas = item.canvas;
             canvas.render(layer);
         }
+    }
+
+    savePicture() {
+        
     }
 
 
