@@ -67,7 +67,7 @@ export default class ResizeBox extends Base {
                 },
                 {
                     tagName: 'div',
-                    classList: ['resize-t__cut', , 'cut-point'],
+                    classList: ['resize-t__cut', 'cut-point'],
                     ref: 'tCut'
                 },
                 {
@@ -95,42 +95,112 @@ export default class ResizeBox extends Base {
         let currentRotate = 0;
         let startX, startY;
         let initWidth, initHeight;
+        let initScaleX, initScaleY;
+        let v, angleDiff, offsetX, offsetY, currentWidth, currentHeight;
+
+        lt.addEventListener('mousedown', mouseDown);
+        rt.addEventListener('mousedown', mouseDown);
+        ld.addEventListener('mousedown', mouseDown);
+        rd.addEventListener('mousedown', mouseDown);
+        t.addEventListener('mousedown', mouseDown);
+        d.addEventListener('mousedown', mouseDown);
+        l.addEventListener('mousedown', mouseDown);
+        r.addEventListener('mousedown', mouseDown);
+        
+
+
         function move(e) {
+            v = new Vec2(e.clientX - startX, e.clientY - startY);
+            angleDiff = v.angle - currentRotate;
+            offsetX = v.m * Math.cos(angleDiff);
+            offsetY = v.m * Math.sin(angleDiff);
+
             currentCtrl && currentCtrl(e);
+
+            lastMoveStep.scaleX = currentWidth / initWidth;
+            lastMoveStep.scaleY = currentHeight / initHeight;
+            store.dispatch(drawLayer(that.layer));
+            that.updatePosition(that.layer);   
         }
 
         function up () {
+            that.layer.currentWidth *= lastMoveStep.scaleX;
+            that.layer.currentHeight *= lastMoveStep.scaleY;
             document.removeEventListener('mousemove', move);
             document.removeEventListener('mouseup', up);
         }
 
         function ltControl (e) {
-            let v = new Vec2(e.clientX - startX, e.clientY - startY);
-            let angleDiff = v.angle - currentRotate;
-            let offsetX = v.m * Math.cos(angleDiff);
-            let offsetY = v.m * Math.sin(angleDiff);
-            let currentWidth = initWidth - offsetX * 2 * store.state.zoom;
-            let currentHeihgt = initHeight - offsetY * 2 * store.state.zoom;
-            lastMoveStep.scaleX = currentWidth / initWidth;
-            lastMoveStep.scaleY = currentHeihgt / initHeight;
-            store.dispatch(drawLayer(that.layer));
-            that.updatePosition(that.layer);   
+            currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
+            currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
         }
 
-        lt.addEventListener('mousedown', function (e) {
+        function rtControl(e) {
+            currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
+            currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+        }
+
+        function ldControl (e) {
+            currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
+            currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+        }
+
+        function rdControl(e) {
+            currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
+            currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+        }
+
+        function lControl(e) {
+            currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
+        }
+
+        function rControl(e) {
+            currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
+        }
+
+        function tControl(e) {
+            currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+        }
+
+        function dControl(e) {
+            currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+        }
+
+        function mouseDown(e) {
             e.stopPropagation();
-            currentCtrl = ltControl;
+            if (this.classList.contains('resize-lt')) {
+                currentCtrl = ltControl;
+            } else if (this.classList.contains('resize-rt')) {
+                currentCtrl = rtControl;
+            } else if (this.classList.contains('resize-ld')) {
+                currentCtrl = ldControl;
+            } else if (this.classList.contains('resize-rd')) {
+                currentCtrl = rdControl;
+            } else if (this.classList.contains('resize-t')) {
+                currentCtrl = tControl;
+            } else if (this.classList.contains('resize-d')) {
+                currentCtrl = dControl;
+            } else if (this.classList.contains('resize-l')) {
+                currentCtrl = lControl;
+            } else if (this.classList.contains('resize-r')) {
+                currentCtrl = rControl;
+            }
+            
             lastMoveStep = that.layer.steps[that.layer.steps.length - 1];
             if (lastMoveStep) {
                 currentRotate = lastMoveStep.rotate * Math.PI / 180;
-                initWidth = that.layer.width;
-                initHeight = that.layer.height;
+                initWidth = that.layer.originWidth;
+                initHeight = that.layer.originHeight;
+                initScaleX = lastMoveStep.scaleX;
+                initScaleY = lastMoveStep.scaleY;
             }
             startX = e.clientX;
             startY = e.clientY;
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
-        })
+        }
+
+        
         
         return root;
     }

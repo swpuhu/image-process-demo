@@ -88,6 +88,23 @@ canvas {
                 border-radius: 50%;
                 background-color: @resizePointerColor;
             }
+
+            .rotate-point {
+                position: absolute;
+                width: @resizePointerSize;
+                height: 10px;
+                border-radius: 50%;
+                background-color: @rotatePointerColor;
+            }
+
+            .cut-point {
+                position: absolute;
+                width: @cutPointerWidth;
+                // min-width: @cutPointerMinWidth;
+                height: @cutPointerHeight;
+                background-color: @cutPointerColor;
+            }
+            
             .resize-lt {
                 top: 0;
                 left: 0;
@@ -141,6 +158,49 @@ canvas {
                 left: 0;
                 transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));
                 cursor: ew-resize;
+            }
+            .resize-rotate {
+                top: -30px;
+                left: 50%;
+                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));
+                cursor: cell;
+                &::after {
+                    content: '';
+                    display: block;
+                    width: 1px;
+                    height: calc(30px - @resizePointerSize);
+                    background-color: #fff;
+                    transform: translate(calc(@resizePointerSize / 2), @resizePointerSize);
+                }
+            }
+            .resize-t__cut {
+                top: 0;
+                left: 50%;
+                transform: translate(calc(@cutPointerWidth / -2), calc(@resizePointerSize / 2 + 5px));
+            }
+
+            .resize-d__cut {
+                bottom: 0;
+                left: 50%;
+                transform: translate(calc(@cutPointerWidth / -2), calc(@resizePointerSize / -2 - 5px));
+            }
+
+            
+            .resize-l__cut {
+                width: @cutPointerHeight;
+                height: @cutPointerWidth;
+                left: 0;
+                top: 50%;
+                transform: translate(calc(@resizePointerSize / 2 + 5px), calc(@cutPointerWidth / -2));
+            }
+
+            
+            .resize-r__cut {
+                width: @cutPointerHeight;
+                height: @cutPointerWidth;
+                right: 0;
+                top: 50%;
+                transform: translate(calc(@resizePointerSize / -2 - 5px), calc(@cutPointerWidth / -2));
             }
         }
     }

@@ -52,6 +52,8 @@ class FileMenu extends Base {
                 let layer = {
                     width: image.width,
                     height: image.height,
+                    originWidth: image.width,
+                    originHeight: image.height,
                     image: image,
                     name: util.deletePostfix(file.name),
                     steps: [

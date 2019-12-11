@@ -14,9 +14,13 @@ export default class RenderContext {
         /**
          * @type {WebGL2RenderingContext | WebGLRenderingContext}
          */
-        let gl = canvas.getContext('webgl2');
+        let gl = canvas.getContext('webgl2', {
+            premultipliedAlpha: false
+        });
         if (!gl) {
-            gl = canvas.getContext('webgl');
+            gl = canvas.getContext('webgl', {
+                premultipliedAlpha: false
+            });
         }
         if (!gl) {
             alert('您的显卡/浏览器不支持WEBGL！无法使用该应用程序！');
@@ -24,6 +28,8 @@ export default class RenderContext {
         }
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        gl.clearColor(0.0, 0.0, 0.0, 0.0);
+        
 
         let width = canvas.width;
         let height = canvas.height;
