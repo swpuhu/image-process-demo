@@ -90,16 +90,8 @@ export default class ResizeBox extends Base {
         let {lt, t, rt, r, rd, d, ld, l, rotate, tCut, dCut, lCut, rCut, root} = util.generateDOM(template);
         let that = this;
         root.addEventListener('mousedown', function (e) {
-            e.stopPropagation();
             e.preventDefault();
-            console.log(that.layer);
-            function move(ev) {
-                
-            }
-
-            function up () {
-
-            }
+            
         })
         return root;
     }
@@ -133,10 +125,10 @@ export default class ResizeBox extends Base {
             // let scaleMat = glUtil.createScaleMatrix(lastStep.scaleX, lastStep.scaleY, 1, {x: centerX, y: centerY, z: 1});
             // let rotateMat = glUtil.createRotateMatrix({x: centerX, y: centerY, z: 1}, lastStep.rotate);
             // let mat = glUtil.multiply(scaleMat, translateMat);
-            x1 = (x1 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX;
-            x2 = (x2 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX;
-            y1 = (y1 - centerY) * lastStep.scaleY + centerY + lastStep.offsetY;
-            y2 = (y2 - centerY) * lastStep.scaleY + centerY + lastStep.offsetY;
+            x1 = (x1 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
+            x2 = (x2 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
+            y1 = (y1 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
+            y2 = (y2 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
         }
         
 

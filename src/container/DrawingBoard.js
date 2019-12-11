@@ -59,6 +59,8 @@ class DrawingBoard extends Base {
                     currentCanvas.render(currentLayer.layer);
                 }
             }
+
+            that.resizeBox.updatePosition(layers[0]);
             
             
 

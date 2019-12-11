@@ -38,6 +38,16 @@ class Item {
             that.active();
             store.dispatch(changeLayer(that.layer));
         })
+
+
+        root.ondragstart = function () {
+            console.log('start');
+        }
+
+        root.ondragover = function (e) {
+            
+        }
+
         stamp.src = util.generateStamp(this.layer.image);
         return root;
     }
@@ -83,6 +93,15 @@ class LayerInfo extends Base{
         root.addEventListener('contextmenu', function (e) {
             that.contextMenu.show(e);
         })
+
+        root.ondragover = function (e) {
+            e.preventDefault();
+            return false;
+        }
+        root.ondrop = function (e) {
+            e.preventDefault();
+            console.log('drop');
+        }
 
         return root;
     }
