@@ -59,6 +59,8 @@ export default class NormalFilter {
 
         this.a_position = a_position;
         this.u_translate = u_translate;
+        this.u_scale = u_scale;
+        this.u_rotate = u_rotate;
         this.translateMat = translateMat;
         this.u_projection = u_projection;
         this.program = program;
@@ -75,6 +77,16 @@ export default class NormalFilter {
     setTranslate(x, y) {
         let translateMat = glUtil.createTranslateMatrix(x, y, 0);
         this.gl.uniformMatrix4fv(this.u_translate, false, translateMat);
+    }
+
+    setRotate(angle, centerX = this.gl.canvas.width / 2, centerY = this.gl.canvas.height / 2) {
+        let rotateMat = glUtil.createRotateMatrix({x: centerX, y: centerY}, angle);
+        this.gl.uniformMatrix4fv(this.u_rotate, false, rotateMat);
+    }
+
+    setScale(sx, sy, centerX = this.gl.canvas.width / 2, centerY = this.gl.canvas.height / 2) {
+        let scaleMat = glUtil.createScaleMatrix(sx, sy, 1, {x: centerX, y: centerY, z: 1});
+        this.gl.uniformMatrix4fv(this.u_scale, false, scaleMat);
     }
 
     viewport(projectionMat) {

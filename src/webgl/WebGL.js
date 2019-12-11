@@ -84,6 +84,8 @@ export default class RenderContext {
         for (let step of layer.steps) {
             if (step.type === StepType.MOVE) {
                 this.filters.normal.setTranslate(step.offsetX, step.offsetY);
+                this.filters.normal.setRotate(step.rotate);
+                this.filters.normal.setScale(step.scaleX, step.scaleY);
             }
         }
 

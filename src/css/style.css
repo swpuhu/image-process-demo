@@ -30,6 +30,7 @@ body {
   background-color: #4e4e4e;
   color: #fff;
   cursor: default;
+  overflow: hidden;
 }
 canvas {
   background-color: transparent;
@@ -85,6 +86,66 @@ canvas {
   font-size: 0;
   box-shadow: 0 0 5px 1px #000;
 }
+.main .drawing-board .resize-box {
+  position: absolute;
+  border: 1px #fff dashed;
+  transform: translate(0, 0);
+}
+.main .drawing-board .resize-box .resize-point {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #3b97ec;
+}
+.main .drawing-board .resize-box .resize-lt {
+  top: 0;
+  left: 0;
+  transform: translate(calc(10px / -2), calc(10px / -2));
+  cursor: nwse-resize;
+}
+.main .drawing-board .resize-box .resize-t {
+  top: 0;
+  left: 50%;
+  transform: translate(calc(10px / -2), calc(10px / -2));
+  cursor: ns-resize;
+}
+.main .drawing-board .resize-box .resize-rt {
+  top: 0;
+  right: 0;
+  transform: translate(calc(10px / 2), calc(10px / -2));
+  cursor: nesw-resize;
+}
+.main .drawing-board .resize-box .resize-r {
+  top: 50%;
+  right: 0;
+  transform: translate(calc(10px / 2), calc(10px / -2));
+  cursor: ew-resize;
+}
+.main .drawing-board .resize-box .resize-rd {
+  bottom: 0;
+  right: 0;
+  transform: translate(calc(10px / 2), calc(10px / 2));
+  cursor: nwse-resize;
+}
+.main .drawing-board .resize-box .resize-d {
+  bottom: 0;
+  left: 50%;
+  transform: translate(calc(10px / -2), calc(10px / 2));
+  cursor: ns-resize;
+}
+.main .drawing-board .resize-box .resize-ld {
+  bottom: 0;
+  left: 0;
+  transform: translate(calc(10px / -2), calc(10px / 2));
+  cursor: nesw-resize;
+}
+.main .drawing-board .resize-box .resize-l {
+  top: 50%;
+  left: 0;
+  transform: translate(calc(10px / -2), calc(10px / -2));
+  cursor: ew-resize;
+}
 .info {
   position: absolute;
   top: 28px;
@@ -110,4 +171,21 @@ canvas {
   line-height: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.context-menu {
+  width: 120px;
+  border: 1px solid #000;
+  padding: 5px;
+  background-color: #2f2f2f;
+  box-shadow: 0 0 3px 1px #000;
+  overflow: hidden;
+  z-index: 99999;
+}
+.context-menu.active {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+.context-menu.disappear {
+  opacity: 0;
+  transition: opacity 0.2s;
 }

@@ -3,7 +3,8 @@ import Base from '../util/Base';
 import store from '../store/index';
 import glUtil from '../webgl/util';
 import StepType from '../Enum/StepType';
-
+import Vec2 from '../util/Vec2';
+import {drawLayer} from '../store/action'
 
 export default class ResizeBox extends Base {
     constructor(container) {
@@ -89,10 +90,48 @@ export default class ResizeBox extends Base {
 
         let {lt, t, rt, r, rd, d, ld, l, rotate, tCut, dCut, lCut, rCut, root} = util.generateDOM(template);
         let that = this;
-        root.addEventListener('mousedown', function (e) {
-            e.preventDefault();
-            
+        let currentCtrl = null;
+        let lastMoveStep = null;
+        let currentRotate = 0;
+        let startX, startY;
+        let initWidth, initHeight;
+        function move(e) {
+            currentCtrl && currentCtrl(e);
+        }
+
+        function up () {
+            document.removeEventListener('mousemove', move);
+            document.removeEventListener('mouseup', up);
+        }
+
+        function ltControl (e) {
+            let v = new Vec2(e.clientX - startX, e.clientY - startY);
+            let angleDiff = v.angle - currentRotate;
+            let offsetX = v.m * Math.cos(angleDiff);
+            let offsetY = v.m * Math.sin(angleDiff);
+            let currentWidth = initWidth - offsetX * 2 * store.state.zoom;
+            let currentHeihgt = initHeight - offsetY * 2 * store.state.zoom;
+            lastMoveStep.scaleX = currentWidth / initWidth;
+            lastMoveStep.scaleY = currentHeihgt / initHeight;
+            store.dispatch(drawLayer(that.layer));
+            that.updatePosition(that.layer);   
+        }
+
+        lt.addEventListener('mousedown', function (e) {
+            e.stopPropagation();
+            currentCtrl = ltControl;
+            lastMoveStep = that.layer.steps[that.layer.steps.length - 1];
+            if (lastMoveStep) {
+                currentRotate = lastMoveStep.rotate * Math.PI / 180;
+                initWidth = that.layer.width;
+                initHeight = that.layer.height;
+            }
+            startX = e.clientX;
+            startY = e.clientY;
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', up);
         })
+        
         return root;
     }
 

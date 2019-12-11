@@ -7,6 +7,7 @@ export const ActionType = {
     DELETE_LAYER: 4,
     SAVE_PICTURE: 5,
     TRANSFORM_LAYER: 6,
+    DRAW_LAYER: 7
 }
 
 export function openFile(layer) {
@@ -52,6 +53,14 @@ export function transformLayer(layer) {
         payload: layer
     }
 }
+
+export function drawLayer(layer) {
+    return {
+        type: ActionType.DRAW_LAYER,
+        payload: layer
+    }
+}
+
 
 export function savePicture() {
     return {

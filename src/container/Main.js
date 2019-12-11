@@ -12,6 +12,7 @@ export default class Main extends Base {
 
     render() {
         let drawingBoard = new DrawingBoard();
+        window.drawingBoard = drawingBoard;
         let fileMenu = new FileMenu();
         let template = {
             tagName: 'div',

@@ -87,6 +87,7 @@ class DrawingBoard extends Base {
         }
         canvas.ref.style.width = width + 'px';
         canvas.ref.style.height = height + 'px';
+        canvas.name = layer.name;
         this.layers.push({
             layer: layer,
             canvas: canvas
@@ -118,7 +119,7 @@ class DrawingBoard extends Base {
     }
 
     draw(layer) {
-        let item = this.layers.find(item => item.layer = layer);
+        let item = this.layers.find(item => item.layer === layer);
         if (item) {
             let canvas = item.canvas;
             canvas.render(layer);

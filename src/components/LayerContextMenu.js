@@ -31,6 +31,13 @@ export default class LayerContextMenu extends Base {
         document.addEventListener('mouseup', function () {
             that.hide();
         })
+
+        
+        this.menu.ref.addEventListener('transitionend', function () {
+            if (!this.classList.contains('active')) {
+                this.classList.add('hide');
+            }
+        });
     }
 
     /**
@@ -39,7 +46,10 @@ export default class LayerContextMenu extends Base {
      */
     show(e) {
         this.menu.ref.classList.remove('hide');
-        this.menu.ref.classList.remove('disappear');
+        setTimeout(() => {
+            
+            this.menu.ref.classList.remove('disappear');
+        });
         this.menu.ref.classList.add('active');
         let left = e.clientX;
         let top = e.clientY;
@@ -56,5 +66,6 @@ export default class LayerContextMenu extends Base {
     hide() {
         this.menu.ref.classList.remove('active');
         this.menu.ref.classList.add('disappear');
+        
     }
 }

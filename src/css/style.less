@@ -92,35 +92,41 @@ canvas {
                 top: 0;
                 left: 0;
                 transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));
+                cursor: nwse-resize;
             }
 
             .resize-t {
                 top: 0;
                 left: 50%;
                 transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));
+                cursor: ns-resize;
             }
 
             .resize-rt {
                 top: 0;
                 right: 0;
                 transform: translate(calc(@resizePointerSize / 2), calc(@resizePointerSize / -2));
+                cursor: nesw-resize;
             }
             .resize-r {
                 top: 50%;
                 right: 0;
                 transform: translate(calc(@resizePointerSize / 2), calc(@resizePointerSize / -2));
+                cursor: ew-resize;
             }
 
             .resize-rd {
                 bottom: 0;
                 right: 0;
                 transform: translate(calc(@resizePointerSize / 2), calc(@resizePointerSize / 2));
+                cursor: nwse-resize;
             }
 
             .resize-d {
                 bottom: 0;
                 left: 50%;
                 transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / 2));
+                cursor: ns-resize;
 
             }
 
@@ -128,11 +134,14 @@ canvas {
                 bottom: 0;
                 left: 0;
                 transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / 2));
+                cursor: nesw-resize;
             }
             .resize-l {
                 top: 50%;
                 left: 0;
-                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));}
+                transform: translate(calc(@resizePointerSize / -2), calc(@resizePointerSize / -2));
+                cursor: ew-resize;
+            }
         }
     }
 }

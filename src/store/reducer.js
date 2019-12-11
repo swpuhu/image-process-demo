@@ -65,6 +65,9 @@ export default function (state, action) {
         case ActionType.TRANSFORM_LAYER:
             drawingBoard.showResizeBox(state.currentLayer[0]);
             break;
+        case ActionType.DRAW_LAYER:
+            drawingBoard.draw(action.payload);
+            break;
         default:
             
     }
