@@ -19,4 +19,8 @@ export default class OffCanvas {
         this.canvas.height = height;
         this.renderContext.viewport(0, 0, width, height);
     }
+
+    blendComplete() {
+        this.renderContext.destroyBlendLayers();
+    }
 }

@@ -156,6 +156,7 @@ class DrawingBoard extends Base {
         this.offCanvas.blendImages(images);
         let src = this.offCanvas.canvas.toDataURL();
         util.downloadBase64(src, 'test.png');
+        this.offCanvas.blendComplete();
     }
 
 
