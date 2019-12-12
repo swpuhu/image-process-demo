@@ -17,6 +17,7 @@ class DrawingBoard extends Base {
         this.layers = [];
         this.offCanvas = new OffCanvas(300, 150);
         this.resizeBox = new ResizeBox(this.ref);
+        this.canvas = null;
         // document.body.appendChild(this.offCanvas.canvas);
     }
 
@@ -61,7 +62,7 @@ class DrawingBoard extends Base {
                     layer.style.position_y2 += offsetY;
                     let currentLayer = that.layers.find(item => item.layer === layer);
                     let currentCanvas = currentLayer.canvas;
-                    currentCanvas.render(currentLayer.layer);
+                    that.draw();
                 }
             }
 
@@ -81,6 +82,15 @@ class DrawingBoard extends Base {
         return root;
     }
 
+    init(width, height) {
+        let _width = ~~(store.state.width / store.state.zoom);
+        let _height = ~~(store.state.height / store.state.zoom);
+        this.canvas = new Canvas(width, height);
+        this.canvas.ref.style.width = _width + 'px';
+        this.canvas.ref.style.height = _height + 'px';
+        this.ref.appendChild(this.canvas.ref);
+    }
+
     addCanvas(layer) {
         let width = ~~(store.state.width / store.state.zoom);
         let height = ~~(store.state.height / store.state.zoom);
@@ -90,15 +100,16 @@ class DrawingBoard extends Base {
         } else {
             canvas = new Canvas(layer.width, layer.height);
         }
-        canvas.ref.style.width = width + 'px';
-        canvas.ref.style.height = height + 'px';
-        canvas.name = layer.name;
+        // canvas.ref.style.width = width + 'px';
+        // canvas.ref.style.height = height + 'px';
+        // canvas.name = layer.name;
         this.layers.push({
             layer: layer,
             canvas: canvas
         });
-        canvas.render(layer);
-        this.ref.appendChild(canvas.ref);
+        this.draw();
+        // this.canvas.render();
+        // this.ref.appendChild(canvas.ref);
     }
 
     deleteCanvas(layer) {
@@ -123,12 +134,14 @@ class DrawingBoard extends Base {
         });
     }
 
-    draw(layer) {
-        let item = this.layers.find(item => item.layer === layer);
-        if (item) {
-            let canvas = item.canvas;
-            canvas.render(layer);
-        }
+    draw() {
+        // let item = this.layers.find(item => item.layer === layer);
+        // if (item) {
+        //     let canvas = item.canvas;
+        //     canvas.render(layer);
+        // }
+        // let canvases = this.layers.map(item => item.canvas);
+        this.canvas.render(this.layers);
     }
 
 
@@ -147,21 +160,22 @@ class DrawingBoard extends Base {
     }
     
     async savePicture() {
-        let images = [];
-        for (let layer of this.layers) {
-            let canvas = layer.canvas;
+        // let images = [];
+        // for (let layer of this.layers) {
+        //     let canvas = layer.canvas;
             
-            canvas.render(layer.layer);
-            let image = await this.loadImage(canvas.ref.toDataURL());
-            images.push({
-                texture: image,
-                mode: BlendMode.NORMAL
-            })
-        }
-        this.offCanvas.blendImages(images);
+        //     canvas.render(layer.layer);
+        //     let image = await this.loadImage(canvas.ref.toDataURL());
+        //     images.push({
+        //         texture: image,
+        //         mode: BlendMode.NORMAL
+        //     })
+        // }
+        // this.offCanvas.blendImages(images);
+        this.draw(this.layers, false);
         let src = this.offCanvas.canvas.toDataURL();
         util.downloadBase64(src, 'test.png');
-        this.offCanvas.blendComplete();
+        // this.canvas.destroyBlendLayers();
     }
 
 

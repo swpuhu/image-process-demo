@@ -11,7 +11,7 @@ export default function (state, action) {
             if (!state.layers.length) {
                 state.width = action.payload.width;
                 state.height = action.payload.height;
-
+                drawingBoard.init(state.width, state.height);
             }
             let style = {};
             style.position_x1 = (state.width - action.payload.width) / 2 / state.width;
