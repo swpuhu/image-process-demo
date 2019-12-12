@@ -132,6 +132,8 @@ class DrawingBoard extends Base {
             layer.canvas.ref.style.width = width + 'px';
             layer.canvas.ref.style.height = height + 'px';
         });
+        this.canvas.ref.style.width = width + 'px';
+        this.canvas.ref.style.height = height + 'px';
     }
 
     draw() {
@@ -173,7 +175,8 @@ class DrawingBoard extends Base {
         // }
         // this.offCanvas.blendImages(images);
         this.draw(this.layers, false);
-        let src = this.offCanvas.canvas.toDataURL();
+        // let src = this.offCanvas.canvas.toDataURL();
+        let src = this.canvas.ref.toDataURL();
         util.downloadBase64(src, 'test.png');
         // this.canvas.destroyBlendLayers();
     }

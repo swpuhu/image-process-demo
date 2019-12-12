@@ -140,10 +140,23 @@ function downloadBase64(src, title) {
     a.click();
 }
 
+
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        let image = new Image();
+        image.onload = function () {
+            resolve(image);
+        };
+        image.src = src;
+    })
+}
+
 export default {
     generateDOM,
     getSingleton,
     generateStamp,
     deletePostfix,
-    downloadBase64
+    downloadBase64,
+    loadImage
 }

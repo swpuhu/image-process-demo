@@ -1,5 +1,6 @@
 import NormalFilter from './filter/Normal';
-import util from './util';
+import glUtil from './util';
+import util from '../util/util';
 import store from '../store/index';
 import StepType from '../Enum/StepType';
 import BlendFilter from './filter/Blend';
@@ -29,7 +30,7 @@ export default class RenderContext {
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
-        
+
 
         let width = canvas.width;
         let height = canvas.height;
@@ -48,13 +49,13 @@ export default class RenderContext {
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
 
-        let projectionMat = util.createProjection(width, height, 1);
+        let projectionMat = glUtil.createProjection(width, height, 1);
         let filters = {
             normal: new NormalFilter(gl, projectionMat),
             blend: new BlendFilter(gl, projectionMat),
         }
 
-        let originTexture = util.createTexture(gl);
+        let originTexture = glUtil.createTexture(gl);
 
         this.filters = filters;
         this.gl = gl;
@@ -62,8 +63,8 @@ export default class RenderContext {
         this.cachedImage = false;
         this.blendTextures = [];
         this.blendFramebuffers = [];
-        this.blendTargetTexture = util.createTexture(this.gl);
-        util.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.gl.canvas.width, this.gl.canvas.height);
+        this.blendTargetTexture = glUtil.createTexture(this.gl);
+        glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.gl.canvas.width, this.gl.canvas.height);
         this.tempFramebuffer = null;
         this.width = width;
         this.height = height;
@@ -107,7 +108,7 @@ export default class RenderContext {
             let canvas = canvases[i];
             canvas.canvas.renderContext.renderSingleLayer(canvas.layer);
         }
-        
+
         let points = [
             0.0, 0.0, 0.0, 0.0,
             this.width, 0, 1.0, 0.0,
@@ -127,6 +128,7 @@ export default class RenderContext {
     blendLayers(images) {
         // TODO： Framebuffer loop issue
         this.gl.useProgram(this.filters.blend.program);
+        glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.gl.canvas.width, this.gl.canvas.height);
         let count = 0;
         let targetImage;
         for (let image of images) {
@@ -145,6 +147,12 @@ export default class RenderContext {
         }
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+        for (let i = 0; i < this.blendFramebuffers.length; i++) {
+            this.gl.deleteFramebuffer(this.blendFramebuffers[i]);
+            this.gl.deleteTexture(this.blendTextures[i]);
+        }
+        this.blendFramebuffers = [];
+        this.blendTextures = [];
     }
 
     destroyBlendLayers() {
@@ -172,7 +180,7 @@ export default class RenderContext {
         ]);
 
 
-        let projectionMat = util.createProjection(width, height, 1);
+        let projectionMat = glUtil.createProjection(width, height, 1);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
 
         for (let filter in this.filters) {
