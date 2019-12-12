@@ -32,6 +32,7 @@ class Item {
             ]
         }
         let {root, stamp} = util.generateDOM(template);
+        root.draggable = true;
         let that = this;
         root.addEventListener('click', function () {
             that.clearAllActive();
@@ -45,7 +46,7 @@ class Item {
         }
 
         root.ondragover = function (e) {
-            
+            console.log(e.offsetY);
         }
 
         stamp.src = util.generateStamp(this.layer.image);

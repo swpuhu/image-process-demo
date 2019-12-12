@@ -66,22 +66,34 @@ export default class RenderContext {
 
     }
     render(layer) {
-        let imageWidth = layer.width;
-        let imageHeight = layer.height;
-        let offsetX = (store.state.width - imageWidth) / 2;
-        let offsetY = (store.state.height - imageHeight) / 2;
+        // let imageWidth = layer.width;
+        // let imageHeight = layer.height;
+        // let offsetX = (store.state.width - imageWidth) / 2;
+        // let offsetY = (store.state.height - imageHeight) / 2;
+        // let points = [
+        //     0.0, 0.0, 0.0, 0.0,
+        //     imageWidth, 0.0, 1.0, 0.0,
+        //     imageWidth, imageHeight, 1.0, 1.0,
+        //     imageWidth, imageHeight, 1.0, 1.0,
+        //     0.0, imageHeight, 0.0, 1.0,
+        //     0.0, 0.0, 0.0, 0.0,
+        // ]
+        // for (let i = 0; i < points.length; i += 4) {
+        //     points[i] += offsetX;
+        //     points[i + 1] += offsetY;
+        // }
+        let left = layer.style.position_x1 * store.state.width;
+        let right = layer.style.position_x2 * store.state.width;
+        let top = (1 - layer.style.position_y1) * store.state.height;
+        let bottom = (1 - layer.style.position_y2) * store.state.height;
         let points = [
-            0.0, 0.0, 0.0, 0.0,
-            imageWidth, 0.0, 1.0, 0.0,
-            imageWidth, imageHeight, 1.0, 1.0,
-            imageWidth, imageHeight, 1.0, 1.0,
-            0.0, imageHeight, 0.0, 1.0,
-            0.0, 0.0, 0.0, 0.0,
+            left, bottom, 0.0, 0.0,
+            right, bottom, 1.0, 0.0,
+            right, top, 1.0, 1.0,
+            right, top, 1.0, 1.0,
+            left, top, 0.0, 1.0,
+            left, bottom, 0.0, 0.0
         ]
-        for (let i = 0; i < points.length; i += 4) {
-            points[i] += offsetX;
-            points[i + 1] += offsetY;
-        }
         points = new Float32Array(points);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.useProgram(this.filters.normal.program);
@@ -92,9 +104,9 @@ export default class RenderContext {
         }
         for (let step of layer.steps) {
             if (step.type === StepType.MOVE) {
-                this.filters.normal.setTranslate(step.offsetX, step.offsetY);
-                this.filters.normal.setRotate(step.rotate);
-                this.filters.normal.setScale(step.scaleX, step.scaleY);
+                // this.filters.normal.setTranslate(step.offsetX, step.offsetY);
+                // this.filters.normal.setRotate(step.rotate);
+                // this.filters.normal.setScale(step.scaleX, step.scaleY);
             }
         }
 

@@ -97,6 +97,7 @@ export default class ResizeBox extends Base {
         let initWidth, initHeight;
         let initScaleX, initScaleY;
         let v, angleDiff, offsetX, offsetY, currentWidth, currentHeight;
+        let left, right, top, bottom;
 
         lt.addEventListener('mousedown', mouseDown);
         rt.addEventListener('mousedown', mouseDown);
@@ -131,39 +132,52 @@ export default class ResizeBox extends Base {
         }
 
         function ltControl (e) {
-            currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
-            currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+            // currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
+            // currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+            that.layer.style.position_x1 = left + (offsetX * store.state.zoom / store.state.width);
+            that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
         }
 
         function rtControl(e) {
-            currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
-            currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+            // currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
+            // currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+            that.layer.style.position_x2 = right + (offsetX * store.state.zoom / store.state.width);
+            that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
         }
 
         function ldControl (e) {
-            currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
-            currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+            // currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
+            // currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+            that.layer.style.position_x1 = left + (offsetX * store.state.zoom / store.state.width);
+            that.layer.style.position_y2 = bottom + (offsetY * store.state.zoom / store.state.width);
         }
 
         function rdControl(e) {
-            currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
-            currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+            // currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
+            // currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+            that.layer.style.position_x2 = right + (offsetX * store.state.zoom / store.state.width);
+            that.layer.style.position_y2 = bottom + (offsetY * store.state.zoom / store.state.width);
         }
 
         function lControl(e) {
-            currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
+            // currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
+            that.layer.style.position_x1 = left + (offsetX * store.state.zoom / store.state.width);
+            // that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
         }
 
         function rControl(e) {
-            currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
+            // currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
+            that.layer.style.position_x2 = right + (offsetX * store.state.zoom / store.state.width);
         }
 
         function tControl(e) {
-            currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+            // currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
+            that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
         }
 
         function dControl(e) {
-            currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+            // currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
+            that.layer.style.position_y2 = bottom + (offsetY * store.state.zoom / store.state.width);
         }
 
         function mouseDown(e) {
@@ -196,6 +210,10 @@ export default class ResizeBox extends Base {
             }
             startX = e.clientX;
             startY = e.clientY;
+            left = that.layer.style.position_x1;
+            right = that.layer.style.position_x2;
+            top = that.layer.style.position_y1;
+            bottom = that.layer.style.position_y2;
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
         }
@@ -222,10 +240,10 @@ export default class ResizeBox extends Base {
         let width = store.state.width / store.state.zoom;
         let height = store.state.height / store.state.zoom;
         let currentLayer = layer;
-        let x1 = currentLayer.boundary.minX * width;
-        let x2 = currentLayer.boundary.maxX * width;
-        let y1 = currentLayer.boundary.minY * height;
-        let y2 = currentLayer.boundary.maxY * height;
+        let x1 = currentLayer.style.position_x1 * width;
+        let x2 = currentLayer.style.position_x2 * width;
+        let y1 = currentLayer.style.position_y1 * height;
+        let y2 = currentLayer.style.position_y2 * height;
         let centerX = (x1 + x2) / 2;
         let centerY = (y1 + y2) / 2;
         let lastStep = currentLayer.steps[currentLayer.steps.length - 1];
@@ -234,10 +252,10 @@ export default class ResizeBox extends Base {
             // let scaleMat = glUtil.createScaleMatrix(lastStep.scaleX, lastStep.scaleY, 1, {x: centerX, y: centerY, z: 1});
             // let rotateMat = glUtil.createRotateMatrix({x: centerX, y: centerY, z: 1}, lastStep.rotate);
             // let mat = glUtil.multiply(scaleMat, translateMat);
-            x1 = (x1 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
-            x2 = (x2 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
-            y1 = (y1 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
-            y2 = (y2 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
+            // x1 = (x1 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
+            // x2 = (x2 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
+            // y1 = (y1 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
+            // y2 = (y2 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
         }
         
 
