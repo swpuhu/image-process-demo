@@ -219,9 +219,18 @@ canvas {
         height: 500px;
         overflow-y: auto;
         .layer-item {
-            margin: 10px 0 10px 5px;
+            padding: 5px 0 5px 0;
+            border: 1px solid transparent;
             &.active {
-                background-color: @layerItemActiveColor;
+                .item-container {
+                    background-color: @layerItemActiveColor;
+                }
+            }
+            &.border-top {
+                border-top: 1px dashed @layerItemActiveColor;
+            }
+            &.border-bottom {
+                border-bottom: 1px dashed @layerItemActiveColor;
             }
         }
         .layer-item__title {

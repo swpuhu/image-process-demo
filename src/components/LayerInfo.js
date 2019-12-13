@@ -1,7 +1,7 @@
 import Base from '../util/Base';
 import store from '../store/index';
 import util from '../util/util';
-import { changeLayer } from '../store/action';
+import { changeLayer, drawLayer } from '../store/action';
 import LayerContextMenu from './LayerContextMenu';
 
 class Item {
@@ -11,28 +11,38 @@ class Item {
         this.isActive = false;
         this.clearAllActive = clearAllActive;
         this.changeLayer = changeLayer;
+        this.boundary = null;
+        Item.instance.push(this);
     }
 
     render() {
         let template = {
             tagName: 'div',
-            classList: ['layer-item', 'flex'],
+            classList: ['layer-item'],
             children: [
                 {
-                    tagName: 'img',
-                    classList: ['layer-item__stamp'],
-                    ref: 'stamp'
-                },
-                {
                     tagName: 'div',
-                    classList: ['layer-item__title'],
-                    text: this.layer.name,
-                    title: this.layer.name
+                    classList: ['item-container', 'flex'],
+                    children: [
+                        {
+                            tagName: 'img',
+                            classList: ['layer-item__stamp'],
+                            ref: 'stamp'
+                        },
+                        {
+                            tagName: 'div',
+                            classList: ['layer-item__title'],
+                            text: this.layer.name,
+                            title: this.layer.name
+                        }
+                    ]
+
                 }
             ]
         }
-        let {root, stamp} = util.generateDOM(template);
+        let { root, stamp } = util.generateDOM(template);
         root.draggable = true;
+
         let that = this;
         root.addEventListener('click', function () {
             that.clearAllActive();
@@ -40,14 +50,41 @@ class Item {
             store.dispatch(changeLayer(that.layer));
         })
 
+        root.addEventListener('dragstart', function (e) {
+            e.stopPropagation();
+            Item.selected = this;
+            Item.updateAllBoundary();
 
-        root.ondragstart = function () {
-            console.log('start');
-        }
+        });
 
-        root.ondragover = function (e) {
-            console.log(e.offsetY);
-        }
+
+        root.addEventListener('dragover', function (e) {
+            if (Item.selected !== this) {
+                console.log(that.boundary);
+                // 插入当前元素的前面
+                if (e.clientY <= that.boundary.y + that.boundary.height / 2) {
+                    that.ref.classList.remove('border-bottom');
+                    that.ref.classList.add('border-top');
+                    
+                } else {
+                    // 插入当前元素的后面
+                    that.ref.classList.remove('border-top');
+                    that.ref.classList.add('border-bottom');
+                }
+            }
+        });
+
+
+        root.addEventListener('dragleave', function () {
+            that.ref.classList.remove('border-top');
+            that.ref.classList.remove('border-bottom');
+        })
+
+        root.addEventListener('drop', function () {
+            that.ref.classList.remove('border-top');
+            that.ref.classList.remove('border-bottom');
+        })
+
 
         stamp.src = util.generateStamp(this.layer.image);
         return root;
@@ -65,13 +102,31 @@ class Item {
 
     remove() {
         this.ref.remove();
+        console.log(Item.instance);
+        let index = Item.instance.indexOf(this);
+        if (index > -1) {
+            Item.instance.splice(index, 1);
+        }
+        store.dispatch(drawLayer());
+    }
+
+    updateBoundary() {
+        this.boundary = this.ref.getBoundingClientRect();
     }
 }
 
-class LayerInfo extends Base{
+Item.instance = [];
+Item.selected = null;
+Item.updateAllBoundary = function () {
+    Item.instance.forEach(item => {
+        item.updateBoundary();
+    })
+}
+
+class LayerInfo extends Base {
     constructor() {
         super();
-        this.ref = this.render();    
+        this.ref = this.render();
         this.layerInfoItems = [];
         this.clearAllActive = this.clearAllActive.bind(this);
         this.changeLayer = this.changeLayer.bind(this);
