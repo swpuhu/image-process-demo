@@ -1,6 +1,6 @@
 
 import util from '../util/util';
-import { changeLayer, drawLayer } from '../store/action';
+import { changeLayer, drawLayer, insertBeforeLayer, insertAfterLayer } from '../store/action';
 import store from '../store/index';
 
 export default class LayerItem {
@@ -51,11 +51,15 @@ export default class LayerItem {
 
         root.addEventListener('dragstart', function (e) {
             e.stopPropagation();
-            LayerItem.selected = this;
+            LayerItem.selected = that;
             LayerItem.updateAllBoundary();
 
         });
 
+
+        root.ondragover = function () {
+            return false;
+        }
 
         root.addEventListener('dragover', function (e) {
             if (LayerItem.selected !== this) {
@@ -70,6 +74,7 @@ export default class LayerItem {
                     that.ref.classList.add('border-bottom');
                 }
             }
+            return false;
         });
 
 
@@ -78,20 +83,22 @@ export default class LayerItem {
             that.ref.classList.remove('border-bottom');
         })
 
-        root.addEventListener('drop', function () {
+        root.addEventListener('drop', function (e) {
+            e.preventDefault();
             that.ref.classList.remove('border-top');
             that.ref.classList.remove('border-bottom');
+            let parentElement = root.parentElement;
             if (LayerItem.selected !== this) {
-                
                 if (e.clientY <= that.boundary.y + that.boundary.height / 2) {
                     // 插入当前元素的前面
-                    
-                    
-                    
+                    parentElement.insertBefore(LayerItem.selected.ref, that.ref);
+                    store.dispatch(insertBeforeLayer(LayerItem.selected.layer, that.layer));
                 } else {
                     // 插入当前元素的后面
-                    
+                    parentElement.insertAfter(LayerItem.selected.ref, that.ref);
+                    store.dispatch(insertAfterLayer(LayerItem.selected.layer, that.layer));
                 }
+                store.dispatch(drawLayer());
             }
         })
 
@@ -129,6 +136,6 @@ LayerItem.instance = [];
 LayerItem.selected = null;
 LayerItem.updateAllBoundary = function () {
     LayerItem.instance.forEach(item => {
-        LayerItem.updateBoundary();
+        item.updateBoundary();
     })
 }

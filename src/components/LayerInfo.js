@@ -31,15 +31,6 @@ class LayerInfo extends Base {
             that.contextMenu.show(e);
         })
 
-        root.ondragover = function (e) {
-            e.preventDefault();
-            return false;
-        }
-        root.ondrop = function (e) {
-            e.preventDefault();
-            console.log('drop');
-        }
-
         return root;
     }
 

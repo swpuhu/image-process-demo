@@ -1,4 +1,7 @@
-import {ActionType, openFile}from './action'
+import {
+    ActionType,
+    openFile
+} from './action'
 import DrawingBoard from '../container/DrawingBoard';
 import LayerInfo from '../components/LayerInfo';
 import TOOLTYPE from '../Enum/ToolType';
@@ -6,7 +9,8 @@ import TOOLTYPE from '../Enum/ToolType';
 export default function (state, action) {
     let drawingBoard = new DrawingBoard();
     let layerInfo = new LayerInfo();
-    switch(action.type) {
+    let sourceIndex, targetIndex;
+    switch (action.type) {
         case ActionType.OPEN_FILE:
             if (!state.layers.length) {
                 state.width = action.payload.width;
@@ -68,7 +72,19 @@ export default function (state, action) {
         case ActionType.DRAW_LAYER:
             drawingBoard.draw(action.payload);
             break;
+        case ActionType.INSERT_BEFORE_LAYER:
+            sourceIndex = state.layers.indexOf(action.payload.source);
+            targetIndex = state.layers.indexOf(action.payload.target);
+            state.layers.insertBefore(sourceIndex, targetIndex);
+            drawingBoard.layers.insertBefore(sourceIndex, targetIndex);
+            break;
+        case ActionType.INSERT_AFTER_LAYER:
+            sourceIndex = state.layers.indexOf(action.payload.source);
+            targetIndex = state.layers.indexOf(action.payload.target);
+            state.layers.insertAfter(sourceIndex, targetIndex);
+            drawingBoard.layers.insertAfter(sourceIndex, targetIndex);
+            break;
         default:
-            
+
     }
 }

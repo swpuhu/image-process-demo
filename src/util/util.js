@@ -56,7 +56,12 @@ function generateDOM(t) {
         let current = queue.shift();
         let dom;
         if (current.template.component) {
-            dom = current.template.component.ref;
+            if (current.template.component instanceof HTMLElement) {
+                dom = current.template.component;
+            } else {
+                dom = current.template.component.ref;
+            }
+            
             if (current.template.ref) {
                 refs[current.template.ref] = dom;
             }

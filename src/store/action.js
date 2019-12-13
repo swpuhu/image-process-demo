@@ -7,7 +7,9 @@ export const ActionType = {
     DELETE_LAYER: 4,
     SAVE_PICTURE: 5,
     TRANSFORM_LAYER: 6,
-    DRAW_LAYER: 7
+    DRAW_LAYER: 7,
+    INSERT_BEFORE_LAYER: 8,
+    INSERT_AFTER_LAYER: 9
 }
 
 export function openFile(layer) {
@@ -65,5 +67,27 @@ export function drawLayer(layer) {
 export function savePicture() {
     return {
         type: ActionType.SAVE_PICTURE
+    }
+}
+
+
+export function insertBeforeLayer(source, target) {
+    return {
+        type: ActionType.INSERT_BEFORE_LAYER,
+        payload: {
+            source, 
+            target
+        }
+    }
+}
+
+
+export function insertAfterLayer(source, target) {
+    return {
+        type: ActionType.INSERT_AFTER_LAYER,
+        payload: {
+            source, 
+            target
+        }
     }
 }
