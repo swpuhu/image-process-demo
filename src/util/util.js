@@ -1,15 +1,22 @@
 function generateDOM(t) {
-    function createElement(tagName, isSVG, classList, text, title, attributes) {
+    function createElement(tagName, isSVG, classList, text, title, attributes, props) {
         let doc;
         if (isSVG) {
             doc = document.createElementNS('http://www.w3.org/2000/svg', tagName);
-            if (attributes) {
-                for (let key in attributes) {
-                    doc.setAttribute(key, attributes[key]);
-                }
-            }
         } else {
             doc = document.createElement(tagName);
+        }
+        
+        if (attributes) {
+            for (let key in attributes) {
+                doc.setAttribute(key, attributes[key]);
+            }
+        }
+
+        if (props) {
+            for (let prop in props) {
+                doc[prop] = props[prop];
+            }
         }
 
         if (classList) {
@@ -54,7 +61,7 @@ function generateDOM(t) {
                 refs[current.template.ref] = dom;
             }
         } else {
-            dom = createElement(current.template.tagName, isSVG, current.template.classList, current.template.text, current.template.title, current.template.attributes);
+            dom = createElement(current.template.tagName, isSVG, current.template.classList, current.template.text, current.template.title, current.template.attributes, current.template.props);
             if (current.template.ref) {
                 refs[current.template.ref] = dom;
             }
