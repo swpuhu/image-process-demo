@@ -30,6 +30,7 @@ export default class RenderContext {
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
 
         let width = canvas.width;

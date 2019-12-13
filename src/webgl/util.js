@@ -714,6 +714,13 @@ function createFramebufferTexture(gl, number, framebuffers, textures, width, hei
     }
 };
 
+function getPointAndLineDistance(x, y, x1, y1, x2, y2) {
+    let A = y2 - y1;
+    let B = x1 - x2;
+    let numerator = A * x + B * y - A * x1 - B * y1;
+    let denominator = Math.sqrt(A ** 2 + B ** 2);
+    return Math.abs(numerator / denominator);
+}
 
 export default {
     initWebGL,
@@ -739,5 +746,6 @@ export default {
     subtractVectors,
     lookAt,
     createFramebufferTexture,
-    vecMultipleMat
+    vecMultipleMat,
+    getPointAndLineDistance
 }

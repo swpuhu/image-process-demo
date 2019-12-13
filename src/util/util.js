@@ -98,13 +98,14 @@ const generateStamp = (function () {
     let canvas = document.createElement('canvas');
     let cacheWidth, cacheHeight;
     let context = canvas.getContext('2d');
-    return function (image, width = 80, height = 50) {
+    return function (image, width = 80, height = 50) {    
         if (width !== cacheWidth || height !== cacheHeight) {
             cacheWidth = width;
             cacheHeight = height;
             canvas.width = cacheWidth;
             canvas.height = cacheHeight;
         }
+        context.clearRect(0, 0, width, height);
         context.drawImage(image, 0, 0, width, height);
         return canvas.toDataURL();
 

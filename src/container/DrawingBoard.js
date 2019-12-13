@@ -108,6 +108,7 @@ class DrawingBoard extends Base {
             canvas: canvas
         });
         this.draw();
+        this.draw();
         // this.canvas.render();
         // this.ref.appendChild(canvas.ref);
     }
