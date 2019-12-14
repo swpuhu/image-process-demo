@@ -17,6 +17,21 @@ export default class ResizeBox extends Base {
         this.ref = this.render();
         this.isShow = false;
         this.layer = null;
+        this.position_x1 = 0;
+        this.position_x2 = store.state.width / store.state.zoom;
+        this.position_y1 = 0;
+        this.position_y2 = store.state.height / store.state.zoom;
+        this.rotate = 0;
+    }
+
+
+    init(layer = store.state.currentLayer[0]) {
+        if (!layer) return;
+        this.position_x1 = Math.min(layer.style.x1, layer.style.x2, layer.style.x3, layer.style.x4) / store.state.zoom;
+        this.position_x2 = Math.max(layer.style.x1, layer.style.x2, layer.style.x3, layer.style.x4) / store.state.zoom;
+        this.position_y1 = Math.min(layer.style.y1, layer.style.y2, layer.style.y3, layer.style.y4) / store.state.zoom;
+        this.position_y2 = Math.max(layer.style.y1, layer.style.y2, layer.style.y3, layer.style.y4) / store.state.zoom;
+        this.rotate = 0;
     }
 
     render() {
@@ -100,8 +115,9 @@ export default class ResizeBox extends Base {
         let startX, startY;
         let initWidth, initHeight;
         let initScaleX, initScaleY;
-        let v, angleDiff, offsetX, offsetY, currentWidth, currentHeight;
-        let left, right, top, bottom, rotate, centerX, centerY, startV, rotateV;
+        let moveV, angleDiff, offsetX, offsetY, currentWidth, currentHeight;
+        let left, right, top, bottom, domCenterX, domCenterY, startV, rotateV, initV;
+        let x1, y1, x2, y2, x3, y3, x4, y4, rotate, centerX, centerY;
 
         lt.addEventListener('mousedown', mouseDown);
         rt.addEventListener('mousedown', mouseDown);
@@ -116,87 +132,8 @@ export default class ResizeBox extends Base {
         dCut.addEventListener('mousedown', mouseDown);
         lCut.addEventListener('mousedown', mouseDown);
         rCut.addEventListener('mousedown', mouseDown);
+
         
-
-
-        function move(e) {
-            v = new Vec2(e.clientX - startX, e.clientY - startY);
-            rotateV = new Vec2(e.clientX - centerX, centerY - e.clientY);
-            // rotateV.sub(startV);
-            let _angleDiff = v.angle;
-            angleDiff = rotateV.getAngle(startV);
-            offsetX = v.m * Math.cos(_angleDiff);
-            offsetY = v.m * Math.sin(_angleDiff);
-
-            currentCtrl && currentCtrl(e);
-
-            lastMoveStep.scaleX = currentWidth / initWidth;
-            lastMoveStep.scaleY = currentHeight / initHeight;
-            store.dispatch(drawLayer(that.layer));
-            that.updatePosition(that.layer);   
-        }
-
-        function up () {
-            that.layer.currentWidth *= lastMoveStep.scaleX;
-            that.layer.currentHeight *= lastMoveStep.scaleY;
-            document.removeEventListener('mousemove', move);
-            document.removeEventListener('mouseup', up);
-        }
-
-        function ltControl (e) {
-            // currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
-            // currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
-            that.layer.style.position_x1 = left + (offsetX * store.state.zoom / store.state.width);
-            that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
-        }
-
-        function rtControl(e) {
-            // currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
-            // currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
-            that.layer.style.position_x2 = right + (offsetX * store.state.zoom / store.state.width);
-            that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
-        }
-
-        function ldControl (e) {
-            // currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
-            // currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
-            that.layer.style.position_x1 = left + (offsetX * store.state.zoom / store.state.width);
-            that.layer.style.position_y2 = bottom + (offsetY * store.state.zoom / store.state.width);
-        }
-
-        function rdControl(e) {
-            // currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
-            // currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
-            that.layer.style.position_x2 = right + (offsetX * store.state.zoom / store.state.width);
-            that.layer.style.position_y2 = bottom + (offsetY * store.state.zoom / store.state.width);
-        }
-
-        function lControl(e) {
-            // currentWidth = initWidth * initScaleX - offsetX * 2 * store.state.zoom;
-            that.layer.style.position_x1 = left + (offsetX * store.state.zoom / store.state.width);
-            // that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
-        }
-
-        function rControl(e) {
-            // currentWidth = initWidth * initScaleX + offsetX * 2 * store.state.zoom;
-            that.layer.style.position_x2 = right + (offsetX * store.state.zoom / store.state.width);
-        }
-
-        function tControl(e) {
-            // currentHeight = initHeight * initScaleY - offsetY * 2 * store.state.zoom;
-            that.layer.style.position_y1 = top + (offsetY * store.state.zoom / store.state.width);
-        }
-
-        function dControl(e) {
-            // currentHeight = initHeight * initScaleY + offsetY * 2 * store.state.zoom;
-            that.layer.style.position_y2 = bottom + (offsetY * store.state.zoom / store.state.width);
-        }
-
-        function rotateControl(e) {
-            
-            lastMoveStep.rotate = rotate - util.r2d(angleDiff);
-            // console.log(lastMoveStep.rotate);
-        }
 
         function mouseDown(e) {
             e.stopPropagation();
@@ -230,17 +167,117 @@ export default class ResizeBox extends Base {
             }
             startX = e.clientX;
             startY = e.clientY;
-            left = that.layer.style.position_x1;
-            right = that.layer.style.position_x2;
-            top = that.layer.style.position_y1;
-            rotate = lastMoveStep.rotate;
-            bottom = that.layer.style.position_y2;
+
             let containerBounding = that.container.getBoundingClientRect();
-            centerX = containerBounding.left + that.layer.style.rotateCenterX * store.state.width / store.state.zoom;
-            centerY = containerBounding.top + that.layer.style.rotateCenterY * store.state.height / store.state.zoom;
-            startV = new Vec2(e.clientX - centerX, centerY - e.clientY);
+            x1 = that.layer.style.x1; 
+            x2 = that.layer.style.x2; 
+            x3 = that.layer.style.x3;  
+            x4 = that.layer.style.x4; 
+            y1 = that.layer.style.y1; 
+            y2 = that.layer.style.y2; 
+            y3 = that.layer.style.y3; 
+            y4 = that.layer.style.y4; 
+            rotate = that.rotate;
+            centerX = (x1 + x3) / 2;
+            centerY = (y1 + y3) / 2;
+
+            
+            domCenterX = containerBounding.left + centerX / store.state.zoom;
+            domCenterY = containerBounding.top + centerY / store.state.zoom;
+            startV = new Vec2(e.clientX - domCenterX, domCenterY - e.clientY);
+            initV = new Vec2(Math.cos(util.d2r(that.rotate)), Math.sin(util.d2r(that.rotate)));
+            currentRotate = util.d2r(that.rotate);
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
+        }
+        
+
+
+        function move(e) {
+            moveV = new Vec2(e.clientX - startX, e.clientY - startY);
+            // console.log(moveV);
+            rotateV = new Vec2(e.clientX - domCenterX, domCenterY - e.clientY);
+            angleDiff = startV.getAngle(rotateV);
+            offsetX = moveV.m * Math.cos(moveV.angle - currentRotate);
+            offsetY = moveV.m * Math.sin(moveV.angle - currentRotate);
+            console.log(offsetX, offsetY);
+            currentCtrl && currentCtrl(e);
+
+            lastMoveStep.scaleX = currentWidth / initWidth;
+            lastMoveStep.scaleY = currentHeight / initHeight;
+            store.dispatch(drawLayer(that.layer));
+            that.updatePosition(that.layer);   
+        }
+
+        function up () {
+            that.layer.currentWidth *= lastMoveStep.scaleX;
+            that.layer.currentHeight *= lastMoveStep.scaleY;
+            document.removeEventListener('mousemove', move);
+            document.removeEventListener('mouseup', up);
+        }
+
+        function ltControl (e) {
+            initV = new Vec2(x3 - x1, y3 - y1);
+            that.layer.style.x1 = x1 + (moveV.m * store.state.zoom / initV.m * initV.x);
+            that.layer.style.y1 = y1 + (moveV.m * store.state.zoom / initV.m * initV.y);
+
+        }
+
+        function rtControl(e) {
+            rControl();
+            tControl();
+        }
+
+        function ldControl (e) {
+            lControl();
+            dControl();
+        }
+
+        function rdControl(e) {
+            rControl();
+            dControl();
+        }
+
+        function lControl(e) {
+            that.layer.style.x1 = x1 + (offsetX * store.state.zoom / initV.m * initV.x);
+            that.layer.style.x4 = x4 + (offsetX * store.state.zoom / initV.m * initV.x);
+            that.layer.style.y1 = y1 + (offsetX * store.state.zoom / initV.m * initV.y);
+            that.layer.style.y4 = y4 + (offsetX * store.state.zoom / initV.m * initV.y);
+        }
+
+        function rControl(e) {
+            that.layer.style.x2 = x2 + (offsetX * store.state.zoom / initV.m * initV.x);
+            that.layer.style.x3 = x3 + (offsetX * store.state.zoom / initV.m * initV.x);
+            that.layer.style.y2 = y2 + (offsetX * store.state.zoom / initV.m * initV.y);
+            that.layer.style.y3 = y3 + (offsetX * store.state.zoom / initV.m * initV.y);
+        }
+
+        function tControl(e) {
+            initV = new Vec2(Math.sin(util.d2r(that.rotate)), Math.cos(util.d2r(that.rotate)));
+            that.layer.style.y1 = y1 + (offsetY * store.state.zoom / initV.m * initV.y);
+            that.layer.style.y2 = y2 + (offsetY * store.state.zoom / initV.m * initV.y);
+            that.layer.style.x1 = x1 - (offsetY * store.state.zoom / initV.m * initV.x);
+            that.layer.style.x2 = x2 - (offsetY * store.state.zoom / initV.m * initV.x);
+        }
+
+        function dControl(e) {
+            initV = new Vec2(Math.sin(util.d2r(that.rotate)), Math.cos(util.d2r(that.rotate)));
+            that.layer.style.y3 = y3 + (offsetY * store.state.zoom / initV.m * initV.y);
+            that.layer.style.y4 = y4 + (offsetY * store.state.zoom / initV.m * initV.y);
+            that.layer.style.x3 = x3 - (offsetY * store.state.zoom / initV.m * initV.x);
+            that.layer.style.x4 = x4 - (offsetY * store.state.zoom / initV.m * initV.x);
+        }
+
+        function rotateControl(e) {
+            // console.log(x1, y1);
+            [that.layer.style.x1, that.layer.style.y1] = glUtil.rotate({x: centerX, y: centerY}, x1, y1, util.r2d(angleDiff));
+            [that.layer.style.x2, that.layer.style.y2] = glUtil.rotate({x: centerX, y: centerY}, x2, y2, util.r2d(angleDiff));
+            [that.layer.style.x3, that.layer.style.y3] = glUtil.rotate({x: centerX, y: centerY}, x3, y3, util.r2d(angleDiff));
+            [that.layer.style.x4, that.layer.style.y4] = glUtil.rotate({x: centerX, y: centerY}, x4, y4, util.r2d(angleDiff));
+            that.rotate = rotate + util.r2d(angleDiff);
+            // lastMoveStep.rotate = rotate - util.r2d(angleDiff);
+            // console.log(lastMoveStep.rotate);
+            // console.log(angleDiff);
         }
 
         
@@ -250,6 +287,7 @@ export default class ResizeBox extends Base {
 
     show(layer) {
         this.layer = layer;
+        this.init(layer);
         this.updatePosition(layer);
         this.container.appendChild(this.ref);
         this.isShow = true;
@@ -262,16 +300,12 @@ export default class ResizeBox extends Base {
     }
 
     updatePosition(layer) {
-        let width = store.state.width / store.state.zoom;
-        let height = store.state.height / store.state.zoom;
         let currentLayer = layer;
-        let x1 = currentLayer.style.position_x1 * width;
-        let x2 = currentLayer.style.position_x2 * width;
-        let y1 = currentLayer.style.position_y1 * height;
-        let y2 = currentLayer.style.position_y2 * height;
-        let centerX = (x1 + x2) / 2;
-        let centerY = (y1 + y2) / 2;
-        let rotate = 0;
+        let x1 = this.position_x1; 
+        let x2 = this.position_x2; 
+        let y1 = this.position_y1;
+        let y2 = this.position_y2;
+        let rotate = currentLayer.style.rotate;
         let lastStep = currentLayer.steps[currentLayer.steps.length - 1];
         if (lastStep.type === StepType.MOVE) {
             // let translateMat = glUtil.createTranslateMatrix(lastStep.offsetX, lastStep.offsetY, 0);
@@ -282,7 +316,7 @@ export default class ResizeBox extends Base {
             // x2 = (x2 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
             // y1 = (y1 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
             // y2 = (y2 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
-            rotate = lastStep.rotate;
+            // rotate = lastStep.rotate;
         }
         
 
@@ -290,7 +324,7 @@ export default class ResizeBox extends Base {
         this.ref.style.top = y1 + 'px';
         this.ref.style.width = x2 - x1 + 'px';
         this.ref.style.height = y2 - y1 + 'px';
-        this.ref.style.transform = `rotate(${rotate}deg)`;
+        this.ref.style.transform = `rotate(${this.rotate}deg)`;
         
     }
 

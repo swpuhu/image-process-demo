@@ -16,11 +16,11 @@ export default class RenderContext {
          * @type {WebGL2RenderingContext | WebGLRenderingContext}
          */
         let gl = canvas.getContext('webgl2', {
-            premultipliedAlpha: false
+            // premultipliedAlpha: false
         });
         if (!gl) {
             gl = canvas.getContext('webgl', {
-                premultipliedAlpha: false
+                // premultipliedAlpha: false
             });
         }
         if (!gl) {
@@ -28,7 +28,7 @@ export default class RenderContext {
             throw new Error('cannot support webgl!');
         }
 
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -72,21 +72,25 @@ export default class RenderContext {
 
     }
     renderSingleLayer(layer) {
-        let left = layer.style.position_x1 * store.state.width;
-        let right = layer.style.position_x2 * store.state.width;
-        let top = (1 - layer.style.position_y1) * store.state.height;
-        let bottom = (1 - layer.style.position_y2) * store.state.height;
-        let width = right - left;
-        let height = top - bottom;
-        let centerX = (right + left) / 2;
-        let centerY = (top + bottom) / 2;
+        let Width = store.state.width;
+        let Height = store.state.height;
+        let x1 = layer.style.x1;
+        let x2 = layer.style.x2;
+        let x3 = layer.style.x3;
+        let x4 = layer.style.x4;
+        let y1 = layer.style.y1;
+        let y2 = layer.style.y2;
+        let y3 = layer.style.y3;
+        let y4 = layer.style.y4;
+        let centerX = (x1 + x2) / 2;
+        let centerY = (y1 + y3) / 2;
         let points = [
-            left, top, 0.0, 0.0,
-            right, top, 1.0, 0.0,
-            right, bottom, 1.0, 1.0,
-            right, bottom, 1.0, 1.0,
-            left, bottom, 0.0, 1.0,
-            left, top, 0.0, 0.0
+            x1, y1, 0.0, 0.0,
+            x2, y2, 1.0, 0.0,
+            x3, y3, 1.0, 1.0,
+            x3, y3, 1.0, 1.0,
+            x4, y4, 0.0, 1.0,
+            x1, y1, 0.0, 0.0
         ]
         points = new Float32Array(points);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
@@ -99,7 +103,7 @@ export default class RenderContext {
         for (let step of layer.steps) {
             if (step.type === StepType.MOVE) {
                 // this.filters.normal.setTranslate(step.offsetX, step.offsetY);
-                this.filters.normal.setRotate(-step.rotate, centerX, centerY);
+                // this.filters.normal.setRotate(-step.rotate, centerX, centerY);
                 // this.filters.normal.setScale(step.scaleX, step.scaleY);
             }
         }

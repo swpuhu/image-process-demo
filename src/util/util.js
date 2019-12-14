@@ -181,6 +181,22 @@ function r2d(r) {
 function d2r(d) {
     return d * Math.PI / 180;
 }
+
+
+function throttle(fn, delay = 50) {
+    let timer;
+    return function () {
+        if (timer) {
+            return;
+        }
+        timer = setTimeout(() => {
+            fn.apply(this, arguments);
+            clearTimeout(timer);
+            timer = null;
+        }, delay);
+    }
+}
+
 export default {
     generateDOM,
     getSingleton,
@@ -189,5 +205,6 @@ export default {
     downloadBase64,
     loadImage,
     r2d,
-    d2r
+    d2r,
+    throttle
 }

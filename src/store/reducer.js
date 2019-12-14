@@ -17,11 +17,24 @@ export default function (state, action) {
                 state.height = action.payload.height;
                 drawingBoard.init(state.width, state.height);
             }
-            let style = {};
-            style.position_x1 = (state.width - action.payload.width) / 2 / state.width;
-            style.position_x2 = style.position_x1 + (action.payload.width) / state.width;
-            style.position_y1 = (state.height - action.payload.height) / 2 / state.height;
-            style.position_y2 = style.position_y1 + (action.payload.height) / state.height;
+            let style = {
+                x1: (state.width - action.payload.width) / 2,
+                y1: (state.height - action.payload.height) / 2,
+
+                x2: (state.width + action.payload.width) / 2,
+                y2: (state.height - action.payload.height) / 2,
+
+                x3: (state.width + action.payload.width) / 2,
+                y3: (state.height + action.payload.height) / 2,
+
+                x4: (state.width - action.payload.width) / 2,
+                y4: (state.height + action.payload.height) / 2,
+
+            };
+            // style.position_x1 = 
+            // style.position_x2 = 
+            // style.position_y1 = 
+            // style.position_y2 = 
             // style.rotateCenterX = (style.position_x1 + style.position_x2) / 2;
             // style.rotateCenterY = (style.position_y1 + style.position_y2) / 2;
             style.rotate = 0;

@@ -47,21 +47,16 @@ class DrawingBoard extends Base {
             if (store.state.currentTool === ToolType.MOVE) {
                 for (let layer of layers) {
                     let lastStep = layer.steps[layer.steps.length - 1];
-                    // if (lastStep && lastStep.type === StepType.MOVE) {
-                    //     lastStep.offsetX += (e.movementX * store.state.zoom);
-                    //     lastStep.offsetY -= (e.movementY * store.state.zoom);
-                    // } else {
-                    //     let newStep = new MoveStep(StepType.MOVE, offsetX, offsetY);
-                    //     layer.steps.push(newStep);
-                    // }
-                    let offsetX = e.movementX * store.state.zoom / store.state.width;
-                    let offsetY = e.movementY * store.state.zoom / store.state.height;
-                    layer.style.position_x1 += offsetX;
-                    layer.style.position_x2 += offsetX;
-                    layer.style.position_y1 += offsetY;
-                    layer.style.position_y2 += offsetY;
-                    let currentLayer = that.layers.find(item => item.layer === layer);
-                    let currentCanvas = currentLayer.canvas;
+                    let offsetX = e.movementX * store.state.zoom;
+                    let offsetY = e.movementY * store.state.zoom;
+                    layer.style.x1 += offsetX;
+                    layer.style.x2 += offsetX;
+                    layer.style.x3 += offsetX;
+                    layer.style.x4 += offsetX;
+                    layer.style.y1 += offsetY;
+                    layer.style.y2 += offsetY;
+                    layer.style.y3 += offsetY;
+                    layer.style.y4 += offsetY;
                     that.draw();
                 }
             }

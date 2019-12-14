@@ -9,7 +9,7 @@ export default class Vec2 {
     }
 
     get angle() {
-        return Math.atan2(this.y, this.x);
+        return Math.atan2(this.y, this.x) >= 0 ? Math.atan2(this.y, this.x) : 2 * Math.PI + Math.atan2(this.y, this.x);
     }
     /**
      * 
