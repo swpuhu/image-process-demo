@@ -165,11 +165,29 @@ function loadImage(src) {
     })
 }
 
+
+/**
+ * @description 弧度转角度
+ * @param {number} r 弧度 
+ */
+function r2d(r) {
+    return r  / Math.PI * 180;
+}
+
+/**
+ * @description 角度转弧度
+ * @param {number} d 角度
+ */
+function d2r(d) {
+    return d * Math.PI / 180;
+}
 export default {
     generateDOM,
     getSingleton,
     generateStamp,
     deletePostfix,
     downloadBase64,
-    loadImage
+    loadImage,
+    r2d,
+    d2r
 }

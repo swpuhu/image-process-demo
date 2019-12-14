@@ -7,6 +7,10 @@ import Vec2 from '../util/Vec2';
 import {drawLayer} from '../store/action'
 
 export default class ResizeBox extends Base {
+    /**
+     * 
+     * @param {HTMLElement} container 
+     */
     constructor(container) {
         super();
         this.container = container;
@@ -63,7 +67,7 @@ export default class ResizeBox extends Base {
                 {
                     tagName: 'div',
                     classList: ['resize-rotate', 'rotate-point'],
-                    ref: 'rotate'
+                    ref: 'rotateDOM'
                 },
                 {
                     tagName: 'div',
@@ -83,12 +87,12 @@ export default class ResizeBox extends Base {
                 {
                     tagName: 'div',
                     classList: ['resize-r__cut', 'cut-point'],
-                    ref: 'dCut'
+                    ref: 'rCut'
                 }
             ]
         }
 
-        let {lt, t, rt, r, rd, d, ld, l, rotate, tCut, dCut, lCut, rCut, root} = util.generateDOM(template);
+        let {lt, t, rt, r, rd, d, ld, l, rotateDOM, tCut, dCut, lCut, rCut, root} = util.generateDOM(template);
         let that = this;
         let currentCtrl = null;
         let lastMoveStep = null;
@@ -97,7 +101,7 @@ export default class ResizeBox extends Base {
         let initWidth, initHeight;
         let initScaleX, initScaleY;
         let v, angleDiff, offsetX, offsetY, currentWidth, currentHeight;
-        let left, right, top, bottom;
+        let left, right, top, bottom, rotate, centerX, centerY, startV, rotateV;
 
         lt.addEventListener('mousedown', mouseDown);
         rt.addEventListener('mousedown', mouseDown);
@@ -107,14 +111,22 @@ export default class ResizeBox extends Base {
         d.addEventListener('mousedown', mouseDown);
         l.addEventListener('mousedown', mouseDown);
         r.addEventListener('mousedown', mouseDown);
+        rotateDOM.addEventListener('mousedown', mouseDown);
+        tCut.addEventListener('mousedown', mouseDown);
+        dCut.addEventListener('mousedown', mouseDown);
+        lCut.addEventListener('mousedown', mouseDown);
+        rCut.addEventListener('mousedown', mouseDown);
         
 
 
         function move(e) {
             v = new Vec2(e.clientX - startX, e.clientY - startY);
-            angleDiff = v.angle - currentRotate;
-            offsetX = v.m * Math.cos(angleDiff);
-            offsetY = v.m * Math.sin(angleDiff);
+            rotateV = new Vec2(e.clientX - centerX, centerY - e.clientY);
+            // rotateV.sub(startV);
+            let _angleDiff = v.angle;
+            angleDiff = rotateV.getAngle(startV);
+            offsetX = v.m * Math.cos(_angleDiff);
+            offsetY = v.m * Math.sin(_angleDiff);
 
             currentCtrl && currentCtrl(e);
 
@@ -180,6 +192,12 @@ export default class ResizeBox extends Base {
             that.layer.style.position_y2 = bottom + (offsetY * store.state.zoom / store.state.width);
         }
 
+        function rotateControl(e) {
+            
+            lastMoveStep.rotate = rotate - util.r2d(angleDiff);
+            // console.log(lastMoveStep.rotate);
+        }
+
         function mouseDown(e) {
             e.stopPropagation();
             if (this.classList.contains('resize-lt')) {
@@ -198,6 +216,8 @@ export default class ResizeBox extends Base {
                 currentCtrl = lControl;
             } else if (this.classList.contains('resize-r')) {
                 currentCtrl = rControl;
+            } else if (this.classList.contains('resize-rotate')) {
+                currentCtrl = rotateControl;
             }
             
             lastMoveStep = that.layer.steps[that.layer.steps.length - 1];
@@ -213,7 +233,12 @@ export default class ResizeBox extends Base {
             left = that.layer.style.position_x1;
             right = that.layer.style.position_x2;
             top = that.layer.style.position_y1;
+            rotate = lastMoveStep.rotate;
             bottom = that.layer.style.position_y2;
+            let containerBounding = that.container.getBoundingClientRect();
+            centerX = containerBounding.left + that.layer.style.rotateCenterX * store.state.width / store.state.zoom;
+            centerY = containerBounding.top + that.layer.style.rotateCenterY * store.state.height / store.state.zoom;
+            startV = new Vec2(e.clientX - centerX, centerY - e.clientY);
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', up);
         }
@@ -246,6 +271,7 @@ export default class ResizeBox extends Base {
         let y2 = currentLayer.style.position_y2 * height;
         let centerX = (x1 + x2) / 2;
         let centerY = (y1 + y2) / 2;
+        let rotate = 0;
         let lastStep = currentLayer.steps[currentLayer.steps.length - 1];
         if (lastStep.type === StepType.MOVE) {
             // let translateMat = glUtil.createTranslateMatrix(lastStep.offsetX, lastStep.offsetY, 0);
@@ -256,6 +282,7 @@ export default class ResizeBox extends Base {
             // x2 = (x2 - centerX) * lastStep.scaleX + centerX + lastStep.offsetX / store.state.zoom;
             // y1 = (y1 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
             // y2 = (y2 - centerY) * lastStep.scaleY + centerY - lastStep.offsetY / store.state.zoom;
+            rotate = lastStep.rotate;
         }
         
 
@@ -263,6 +290,7 @@ export default class ResizeBox extends Base {
         this.ref.style.top = y1 + 'px';
         this.ref.style.width = x2 - x1 + 'px';
         this.ref.style.height = y2 - y1 + 'px';
+        this.ref.style.transform = `rotate(${rotate}deg)`;
         
     }
 

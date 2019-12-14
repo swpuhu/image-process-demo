@@ -61,6 +61,11 @@ canvas {
         box-shadow: 1px 1px 2px 1px #000;
         background-color: @backgroundColor;
         z-index: 999999;
+        .menu-item {
+            &:hover {
+                background-color: @iconActiveColor;
+            }
+        }
     }
 }
 
@@ -261,5 +266,10 @@ canvas {
     &.disappear {
         opacity: 0;
         transition: opacity 0.2s;
+    }
+    .contextmenu-item {
+        &:hover {
+            background-color: @iconActiveColor;
+        }
     }
 }

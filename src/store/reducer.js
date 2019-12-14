@@ -22,6 +22,22 @@ export default function (state, action) {
             style.position_x2 = style.position_x1 + (action.payload.width) / state.width;
             style.position_y1 = (state.height - action.payload.height) / 2 / state.height;
             style.position_y2 = style.position_y1 + (action.payload.height) / state.height;
+            // style.rotateCenterX = (style.position_x1 + style.position_x2) / 2;
+            // style.rotateCenterY = (style.position_y1 + style.position_y2) / 2;
+            style.rotate = 0;
+
+            Object.defineProperties(style, {
+                rotateCenterX: {
+                    get () {
+                        return (style.position_x1 + style.position_x2) / 2;
+                    }
+                },
+                rotateCenterY: {
+                    get () {
+                        return (style.position_y1 + style.position_y2) / 2;
+                    }
+                }
+            })
             let boundary = {};
             boundary.minX = style.position_x1;
             boundary.minY = style.position_y1;

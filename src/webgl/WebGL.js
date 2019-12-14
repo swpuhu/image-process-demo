@@ -76,6 +76,10 @@ export default class RenderContext {
         let right = layer.style.position_x2 * store.state.width;
         let top = (1 - layer.style.position_y1) * store.state.height;
         let bottom = (1 - layer.style.position_y2) * store.state.height;
+        let width = right - left;
+        let height = top - bottom;
+        let centerX = (right + left) / 2;
+        let centerY = (top + bottom) / 2;
         let points = [
             left, top, 0.0, 0.0,
             right, top, 1.0, 0.0,
@@ -95,7 +99,7 @@ export default class RenderContext {
         for (let step of layer.steps) {
             if (step.type === StepType.MOVE) {
                 // this.filters.normal.setTranslate(step.offsetX, step.offsetY);
-                // this.filters.normal.setRotate(step.rotate);
+                this.filters.normal.setRotate(-step.rotate, centerX, centerY);
                 // this.filters.normal.setScale(step.scaleX, step.scaleY);
             }
         }
