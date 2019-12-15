@@ -2,6 +2,7 @@ import {
     ActionType,
     openFile
 } from './action'
+import EditMode from '../Enum/EditMode';
 import DrawingBoard from '../container/DrawingBoard';
 import LayerInfo from '../components/LayerInfo';
 import TOOLTYPE from '../Enum/ToolType';
@@ -30,6 +31,7 @@ export default function (state, action) {
                 x4: (state.width - action.payload.width) / 2,
                 y4: (state.height + action.payload.height) / 2,
 
+                rotate: 0
             };
             // style.position_x1 = 
             // style.position_x2 = 
@@ -97,6 +99,7 @@ export default function (state, action) {
             break;
         case ActionType.TRANSFORM_LAYER:
             drawingBoard.showResizeBox(state.currentLayer[0]);
+            state.editMode = EditMode.TRANSFORM;
             break;
         case ActionType.DRAW_LAYER:
             drawingBoard.draw(action.payload);
@@ -112,6 +115,9 @@ export default function (state, action) {
             targetIndex = state.layers.indexOf(action.payload.target);
             state.layers.insertAfter(sourceIndex, targetIndex);
             drawingBoard.layers.insertAfter(sourceIndex, targetIndex);
+            break;
+        case ActionType.CHANGE_EDITMODE:
+            state.editMode = action.payload;
             break;
         default:
 

@@ -722,6 +722,17 @@ function getPointAndLineDistance(x, y, x1, y1, x2, y2) {
     return Math.abs(numerator / denominator);
 }
 
+function scale(center, x, y, scaleX, scaleY) {
+    return [
+        (x - center.x) * scaleX + center.x,
+        (y - center.y) * scaleY + center.y
+    ]
+}
+
+
+function getDistance(x1, y1, x2, y2) {
+    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
 export default {
     initWebGL,
     createProjection,
@@ -747,5 +758,7 @@ export default {
     lookAt,
     createFramebufferTexture,
     vecMultipleMat,
-    getPointAndLineDistance
+    getPointAndLineDistance,
+    scale,
+    getDistance
 }

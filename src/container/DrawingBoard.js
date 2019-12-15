@@ -8,6 +8,7 @@ import {MoveStep} from '../Enum/Step';
 import BlendMode from '../Enum/BlendMode';
 import OffCanvas from '../webgl/OffCanvas';
 import ResizeBox from '../components/ResizeBox';
+import EditMode from '../Enum/EditMode';
 
 
 class DrawingBoard extends Base {
@@ -33,6 +34,8 @@ class DrawingBoard extends Base {
         let currentWidth, currentHeight;
 
         function mousedown(e) {
+            e.stopPropagation();
+            if (store.state.editMode !== EditMode.MOVE) return;
             startX = e.clientX;
             startY = e.clientY;
             document.addEventListener('mousemove', mousemove);

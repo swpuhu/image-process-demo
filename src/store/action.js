@@ -9,7 +9,8 @@ export const ActionType = {
     TRANSFORM_LAYER: 6,
     DRAW_LAYER: 7,
     INSERT_BEFORE_LAYER: 8,
-    INSERT_AFTER_LAYER: 9
+    INSERT_AFTER_LAYER: 9,
+    CHANGE_EDITMODE: 10
 }
 
 export function openFile(layer) {
@@ -89,5 +90,13 @@ export function insertAfterLayer(source, target) {
             source, 
             target
         }
+    }
+}
+
+
+export function changeEditMode(mode) {
+    return {
+        type: ActionType.CHANGE_EDITMODE,
+        payload: mode
     }
 }
