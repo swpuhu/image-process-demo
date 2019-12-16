@@ -98,6 +98,7 @@ export default function (state, action) {
             drawingBoard.savePicture();
             break;
         case ActionType.TRANSFORM_LAYER:
+            if (state.editMode === EditMode.TRANSFORM) return;
             drawingBoard.showResizeBox(state.currentLayer[0]);
             state.editMode = EditMode.TRANSFORM;
             break;
@@ -118,6 +119,10 @@ export default function (state, action) {
             break;
         case ActionType.CHANGE_EDITMODE:
             state.editMode = action.payload;
+            break;
+        case ActionType.HIDE_RESIZE_BOX:
+            state.editMode = EditMode.MOVE;
+            drawingBoard.hideResizeBox();
             break;
         default:
 

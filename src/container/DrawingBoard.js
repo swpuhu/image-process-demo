@@ -160,6 +160,9 @@ class DrawingBoard extends Base {
         this.resizeBox.show(layer);
     }
     
+    hideResizeBox() {
+        this.resizeBox.hide();
+    }
     async savePicture() {
         // let images = [];
         // for (let layer of this.layers) {

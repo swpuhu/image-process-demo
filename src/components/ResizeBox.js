@@ -672,7 +672,10 @@ export default class ResizeBox extends Base {
         this.updatePosition(layer);
         this.container.appendChild(this.ref);
         this.isShow = true;
+    }
 
+    hide() {
+        this.ref.remove();
     }
 
     hide() {

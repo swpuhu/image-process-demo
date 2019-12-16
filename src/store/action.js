@@ -10,7 +10,8 @@ export const ActionType = {
     DRAW_LAYER: 7,
     INSERT_BEFORE_LAYER: 8,
     INSERT_AFTER_LAYER: 9,
-    CHANGE_EDITMODE: 10
+    CHANGE_EDITMODE: 10,
+    HIDE_RESIZE_BOX: 11,
 }
 
 export function openFile(layer) {
@@ -98,5 +99,11 @@ export function changeEditMode(mode) {
     return {
         type: ActionType.CHANGE_EDITMODE,
         payload: mode
+    }
+}
+
+export function hideResizeBox() {
+    return {
+        type: ActionType.HIDE_RESIZE_BOX
     }
 }

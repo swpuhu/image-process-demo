@@ -5,6 +5,7 @@ import Toolbox from './container/Toolbox';
 import util from './util/util';
 import './css/style.less';
 import Info from './container/Info';
+import Shortcuts from './global/shortcuts';
 
 export default class App {
     constructor() {
