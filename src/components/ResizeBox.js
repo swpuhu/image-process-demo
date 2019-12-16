@@ -133,6 +133,7 @@ export default class ResizeBox extends Base {
         dCut.addEventListener('mousedown', mouseDown);
         lCut.addEventListener('mousedown', mouseDown);
         rCut.addEventListener('mousedown', mouseDown);
+        root.addEventListener('mousedown', mouseDown);
 
 
 
@@ -156,6 +157,8 @@ export default class ResizeBox extends Base {
                 currentCtrl = rControl;
             } else if (this.classList.contains('resize-rotate')) {
                 currentCtrl = rotateControl;
+            } else {
+                currentCtrl = rootControl;
             }
             startX = e.clientX;
             startY = e.clientY;
@@ -224,6 +227,27 @@ export default class ResizeBox extends Base {
         function up() {
             document.removeEventListener('mousemove', move);
             document.removeEventListener('mouseup', up);
+        }
+
+        function rootControl () {
+            that.layer.style.x1 = x1 + offsetX * store.state.zoom;
+            that.layer.style.x2 = x2 + offsetX * store.state.zoom;
+            that.layer.style.x3 = x3 + offsetX * store.state.zoom;
+            that.layer.style.x4 = x4 + offsetX * store.state.zoom;
+            that.layer.style.y1 = y1 + offsetY * store.state.zoom;
+            that.layer.style.y2 = y2 + offsetY * store.state.zoom;
+            that.layer.style.y3 = y3 + offsetY * store.state.zoom;
+            that.layer.style.y4 = y4 + offsetY * store.state.zoom;
+
+            
+            that.x1 = boxX1 + offsetX;
+            that.x2 = boxX2 + offsetX;
+            that.x3 = boxX3 + offsetX;
+            that.x4 = boxX4 + offsetX;
+            that.y1 = boxY1 + offsetY;
+            that.y2 = boxY2 + offsetY;
+            that.y3 = boxY3 + offsetY;
+            that.y4 = boxY4 + offsetY;
         }
 
         function ltControl(e) {
