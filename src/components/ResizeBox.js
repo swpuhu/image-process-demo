@@ -230,24 +230,24 @@ export default class ResizeBox extends Base {
         }
 
         function rootControl () {
-            that.layer.style.x1 = x1 + offsetX * store.state.zoom;
-            that.layer.style.x2 = x2 + offsetX * store.state.zoom;
-            that.layer.style.x3 = x3 + offsetX * store.state.zoom;
-            that.layer.style.x4 = x4 + offsetX * store.state.zoom;
-            that.layer.style.y1 = y1 + offsetY * store.state.zoom;
-            that.layer.style.y2 = y2 + offsetY * store.state.zoom;
-            that.layer.style.y3 = y3 + offsetY * store.state.zoom;
-            that.layer.style.y4 = y4 + offsetY * store.state.zoom;
+            that.layer.style.x1 = x1 + moveV.x * store.state.zoom;
+            that.layer.style.x2 = x2 + moveV.x * store.state.zoom;
+            that.layer.style.x3 = x3 + moveV.x * store.state.zoom;
+            that.layer.style.x4 = x4 + moveV.x * store.state.zoom;
+            that.layer.style.y1 = y1 + moveV.y * store.state.zoom;
+            that.layer.style.y2 = y2 + moveV.y * store.state.zoom;
+            that.layer.style.y3 = y3 + moveV.y * store.state.zoom;
+            that.layer.style.y4 = y4 + moveV.y * store.state.zoom;
 
             
-            that.x1 = boxX1 + offsetX;
-            that.x2 = boxX2 + offsetX;
-            that.x3 = boxX3 + offsetX;
-            that.x4 = boxX4 + offsetX;
-            that.y1 = boxY1 + offsetY;
-            that.y2 = boxY2 + offsetY;
-            that.y3 = boxY3 + offsetY;
-            that.y4 = boxY4 + offsetY;
+            that.x1 = boxX1 + moveV.x;
+            that.x2 = boxX2 + moveV.x;
+            that.x3 = boxX3 + moveV.x;
+            that.x4 = boxX4 + moveV.x;
+            that.y1 = boxY1 + moveV.y;
+            that.y2 = boxY2 + moveV.y;
+            that.y3 = boxY3 + moveV.y;
+            that.y4 = boxY4 + moveV.y;
         }
 
         function ltControl(e) {
