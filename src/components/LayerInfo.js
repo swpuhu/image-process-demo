@@ -21,7 +21,7 @@ class LayerInfo extends Base {
             children: []
         }
         for (let i = 0; i < store.state.layers.length; i++) {
-            template.push({
+            template.unshift({
                 component: new Item(store.state.layers[i])
             })
         }
@@ -43,8 +43,14 @@ class LayerInfo extends Base {
         let item = new Item(layer, this.clearAllActive, this.changeLayer);
         this.clearAllActive();
         item.active();
-        this.layerInfoItems.push(item);
-        this.ref.appendChild(item.ref);
+        let firstChild = this.layerInfoItems[0];
+        if (firstChild) {
+            this.ref.insertBefore(item.ref, firstChild.ref);
+        } else {
+            this.ref.appendChild(item.ref);
+        }
+        this.layerInfoItems.unshift(item);
+        
     }
 
     deleteLayer(layer) {

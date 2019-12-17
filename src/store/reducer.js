@@ -60,7 +60,7 @@ export default function (state, action) {
             boundary.maxY = style.position_y2;
             action.payload.style = style;
             action.payload.boundary = boundary;
-            state.layers.push(action.payload);
+            state.layers.unshift(action.payload);
             state.currentLayer = [action.payload];
             drawingBoard.addCanvas(action.payload);
             layerInfo.addLayer(action.payload);

@@ -11,7 +11,7 @@ export default class LayerItem {
         this.clearAllActive = clearAllActive;
         this.changeLayer = changeLayer;
         this.boundary = null;
-        LayerItem.instance.push(this);
+        LayerItem.instance.unshift(this);
     }
 
     render() {

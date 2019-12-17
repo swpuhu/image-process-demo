@@ -139,8 +139,9 @@ export default class RenderContext {
         this.gl.useProgram(this.filters.blend.program);
         glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.gl.canvas.width, this.gl.canvas.height);
         let count = 0;
+        let imagesCopy = images.slice().reverse();
         let targetImage;
-        for (let image of images) {
+        for (let image of imagesCopy) {
             targetImage = image;
             this.gl.activeTexture(this.gl.TEXTURE2);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this.blendTargetTexture);

@@ -90,25 +90,18 @@ class DrawingBoard extends Base {
     }
 
     addCanvas(layer) {
-        let width = ~~(store.state.width / store.state.zoom);
-        let height = ~~(store.state.height / store.state.zoom);
         let canvas;
         if (store.state.width && store.state.height) {
             canvas = new Canvas(store.state.width, store.state.height);
         } else {
             canvas = new Canvas(layer.width, layer.height);
         }
-        // canvas.ref.style.width = width + 'px';
-        // canvas.ref.style.height = height + 'px';
-        // canvas.name = layer.name;
-        this.layers.push({
+        this.layers.unshift({
             layer: layer,
             canvas: canvas
         });
         this.draw();
         this.draw();
-        // this.canvas.render();
-        // this.ref.appendChild(canvas.ref);
     }
 
     deleteCanvas(layer) {
@@ -136,12 +129,6 @@ class DrawingBoard extends Base {
     }
 
     draw() {
-        // let item = this.layers.find(item => item.layer === layer);
-        // if (item) {
-        //     let canvas = item.canvas;
-        //     canvas.render(layer);
-        // }
-        // let canvases = this.layers.map(item => item.canvas);
         this.canvas.render(this.layers);
     }
 
@@ -164,23 +151,9 @@ class DrawingBoard extends Base {
         this.resizeBox.hide();
     }
     async savePicture() {
-        // let images = [];
-        // for (let layer of this.layers) {
-        //     let canvas = layer.canvas;
-            
-        //     canvas.render(layer.layer);
-        //     let image = await this.loadImage(canvas.ref.toDataURL());
-        //     images.push({
-        //         texture: image,
-        //         mode: BlendMode.NORMAL
-        //     })
-        // }
-        // this.offCanvas.blendImages(images);
         this.draw(this.layers, false);
-        // let src = this.offCanvas.canvas.toDataURL();
         let src = this.canvas.ref.toDataURL();
         util.downloadBase64(src, 'test.png');
-        // this.canvas.destroyBlendLayers();
     }
 
 

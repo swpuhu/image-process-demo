@@ -25,8 +25,14 @@ export default class NormalFilter {
         precision mediump float;
         uniform sampler2D u_texture;
         varying vec2 v_texCoord;
+        uniform vec2 u_resolution;
         void main () {
-            gl_FragColor = texture2D(u_texture, v_texCoord);
+            vec2 pos = gl_FragCoord.xy / u_resolution;
+            if (pos.x < 0.5) {
+                gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+            } else {
+                gl_FragColor = texture2D(u_texture, v_texCoord);
+            }
         }
         `;
         let program = glUtil.initWebGL(gl, vertexShader, fragmentShader);
@@ -37,6 +43,9 @@ export default class NormalFilter {
 
         let u_projection = gl.getUniformLocation(program, 'u_projection');
         gl.uniformMatrix4fv(u_projection, false, projectionMat);
+        
+        let u_resolution = gl.getUniformLocation(program, 'u_resolution');
+        gl.uniform2f(u_resolution, gl.canvas.width, gl.canvas.height);
 
         let u_translate = gl.getUniformLocation(program, 'u_translate');
         let u_scale = gl.getUniformLocation(program, 'u_scale');
@@ -63,6 +72,7 @@ export default class NormalFilter {
         this.u_rotate = u_rotate;
         this.translateMat = translateMat;
         this.u_projection = u_projection;
+        this.u_resolution = u_resolution;
         this.program = program;
         this.gl = gl;
     }
@@ -92,6 +102,7 @@ export default class NormalFilter {
     viewport(projectionMat) {
         this.gl.useProgram(this.program);
         this.gl.uniformMatrix4fv(this.u_projection, false, projectionMat);
+        this.gl.uniform2f(this.u_resolution, this.gl.canvas.width, this.gl.canvas.height);
     }
 
 
