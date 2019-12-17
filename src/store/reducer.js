@@ -33,35 +33,15 @@ export default function (state, action) {
 
                 rotate: 0
             };
-            // style.position_x1 = 
-            // style.position_x2 = 
-            // style.position_y1 = 
-            // style.position_y2 = 
-            // style.rotateCenterX = (style.position_x1 + style.position_x2) / 2;
-            // style.rotateCenterY = (style.position_y1 + style.position_y2) / 2;
             style.rotate = 0;
-
-            Object.defineProperties(style, {
-                rotateCenterX: {
-                    get () {
-                        return (style.position_x1 + style.position_x2) / 2;
-                    }
-                },
-                rotateCenterY: {
-                    get () {
-                        return (style.position_y1 + style.position_y2) / 2;
-                    }
-                }
-            })
-            let boundary = {};
-            boundary.minX = style.position_x1;
-            boundary.minY = style.position_y1;
-            boundary.maxX = style.position_x2;
-            boundary.maxY = style.position_y2;
             action.payload.style = style;
-            action.payload.boundary = boundary;
             state.layers.unshift(action.payload);
             state.currentLayer = [action.payload];
+            drawingBoard.addCanvas(action.payload);
+            layerInfo.addLayer(action.payload);
+            break;
+        case ActionType.COPY_LAYER:
+            state.layers.unshift(action.payload);
             drawingBoard.addCanvas(action.payload);
             layerInfo.addLayer(action.payload);
             break;

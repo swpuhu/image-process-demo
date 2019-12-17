@@ -106,26 +106,26 @@ export default class ResizeBox extends Base {
                     classList: ['resize-rotate', 'rotate-point'],
                     ref: 'rotateDOM'
                 },
-                {
-                    tagName: 'div',
-                    classList: ['resize-t__cut', 'cut-point'],
-                    ref: 'tCut'
-                },
-                {
-                    tagName: 'div',
-                    classList: ['resize-d__cut', 'cut-point'],
-                    ref: 'dCut'
-                },
-                {
-                    tagName: 'div',
-                    classList: ['resize-l__cut', 'cut-point'],
-                    ref: 'lCut'
-                },
-                {
-                    tagName: 'div',
-                    classList: ['resize-r__cut', 'cut-point'],
-                    ref: 'rCut'
-                }
+                // {
+                //     tagName: 'div',
+                //     classList: ['resize-t__cut', 'cut-point'],
+                //     ref: 'tCut'
+                // },
+                // {
+                //     tagName: 'div',
+                //     classList: ['resize-d__cut', 'cut-point'],
+                //     ref: 'dCut'
+                // },
+                // {
+                //     tagName: 'div',
+                //     classList: ['resize-l__cut', 'cut-point'],
+                //     ref: 'lCut'
+                // },
+                // {
+                //     tagName: 'div',
+                //     classList: ['resize-r__cut', 'cut-point'],
+                //     ref: 'rCut'
+                // }
             ]
         }
 
@@ -141,6 +141,7 @@ export default class ResizeBox extends Base {
         let p1p4, p1p2;
         let _p1p4, _p1p2;
 
+        root.addEventListener('mousedown', mouseDown);
         lt.addEventListener('mousedown', mouseDown);
         rt.addEventListener('mousedown', mouseDown);
         ld.addEventListener('mousedown', mouseDown);
@@ -150,11 +151,11 @@ export default class ResizeBox extends Base {
         l.addEventListener('mousedown', mouseDown);
         r.addEventListener('mousedown', mouseDown);
         rotateDOM.addEventListener('mousedown', mouseDown);
-        tCut.addEventListener('mousedown', mouseDown);
-        dCut.addEventListener('mousedown', mouseDown);
-        lCut.addEventListener('mousedown', mouseDown);
-        rCut.addEventListener('mousedown', mouseDown);
-        root.addEventListener('mousedown', mouseDown);
+        // tCut.addEventListener('mousedown', mouseDown);
+        // dCut.addEventListener('mousedown', mouseDown);
+        // lCut.addEventListener('mousedown', mouseDown);
+        // rCut.addEventListener('mousedown', mouseDown);
+        
 
 
 

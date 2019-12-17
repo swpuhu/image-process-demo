@@ -12,7 +12,9 @@ export const ActionType = {
     INSERT_AFTER_LAYER: 9,
     CHANGE_EDITMODE: 10,
     HIDE_RESIZE_BOX: 11,
-    REVERT_TRANSFORM: 12
+    REVERT_TRANSFORM: 12,
+    COPY_LAYER: 13,
+    PASTE_LAYER: 14,
 }
 
 export function openFile(layer) {
@@ -113,5 +115,18 @@ export function changeEditMode(mode) {
 export function hideResizeBox() {
     return {
         type: ActionType.HIDE_RESIZE_BOX
+    }
+}
+
+export function copyLayer(layer) {
+    return {
+        type: ActionType.COPY_LAYER,
+        payload: layer
+    }
+}
+
+export function pasteLayer() {
+    return {
+        type: ActionType.PASTE_LAYER
     }
 }
