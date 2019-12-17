@@ -33,6 +33,27 @@ export default class ResizeBox extends Base {
         this.x3 = this.x2;
         this.x4 = this.x1;
         this.rotate = 0;
+        this.originX1 = layer.style.x1;
+        this.originX2 = layer.style.x2;
+        this.originX3 = layer.style.x3;
+        this.originX4 = layer.style.x4;
+        this.originY1 = layer.style.y1;
+        this.originY2 = layer.style.y2;
+        this.originY3 = layer.style.y3;
+        this.originY4 = layer.style.y4;
+        this.layer = layer;
+    }
+
+    revert(layer) {
+        layer.style.x1 = this.originX1;
+        layer.style.x2 = this.originX2;
+        layer.style.x3 = this.originX3;
+        layer.style.x4 = this.originX4;
+        layer.style.y1 = this.originY1;
+        layer.style.y2 = this.originY2;
+        layer.style.y3 = this.originY3;
+        layer.style.y4 = this.originY4;
+        this.hide();
     }
 
     render() {
@@ -672,10 +693,6 @@ export default class ResizeBox extends Base {
         this.updatePosition(layer);
         this.container.appendChild(this.ref);
         this.isShow = true;
-    }
-
-    hide() {
-        this.ref.remove();
     }
 
     hide() {

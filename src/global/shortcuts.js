@@ -1,6 +1,6 @@
 import {getKeys, Keys, FunctionKeys, ShortCuts} from '../Enum/Keys';
 import store from '../store/index';
-import {transformLayer, hideResizeBox} from '../store/action';
+import {transformLayer, hideResizeBox, revertTransform} from '../store/action';
 import EditMode from '../Enum/EditMode';
 
 /**
@@ -17,6 +17,9 @@ function keydown(e) {
     } else if (group.group === ShortCuts.hideResizeBox.group && group.key === ShortCuts.hideResizeBox.key) {
         if (store.state.editMode !== EditMode.TRANSFORM) return;
         store.dispatch(hideResizeBox());
+    } else if (group.group === ShortCuts.revertTransform.group && group.key === ShortCuts.revertTransform.key) {
+        if (store.state.editMode !== EditMode.TRANSFORM) return;
+        store.dispatch(revertTransform(store.state.currentLayer[0]));
     }
     
     

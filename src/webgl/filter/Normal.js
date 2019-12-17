@@ -28,11 +28,11 @@ export default class NormalFilter {
         uniform vec2 u_resolution;
         void main () {
             vec2 pos = gl_FragCoord.xy / u_resolution;
-            if (pos.x < 0.5) {
-                gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-            } else {
+            // if (pos.x < 0.5) {
+            //     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+            // } else {
                 gl_FragColor = texture2D(u_texture, v_texCoord);
-            }
+            // }
         }
         `;
         let program = glUtil.initWebGL(gl, vertexShader, fragmentShader);

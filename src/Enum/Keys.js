@@ -27,6 +27,10 @@ export const ShortCuts = {
     hideResizeBox: {
         group: FunctionKeys.none,
         key: 'Enter'
+    },
+    revertTransform: {
+        group: FunctionKeys.none,
+        key: Keys.Escape
     }
 }
 

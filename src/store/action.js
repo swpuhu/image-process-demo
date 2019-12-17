@@ -12,6 +12,7 @@ export const ActionType = {
     INSERT_AFTER_LAYER: 9,
     CHANGE_EDITMODE: 10,
     HIDE_RESIZE_BOX: 11,
+    REVERT_TRANSFORM: 12
 }
 
 export function openFile(layer) {
@@ -54,6 +55,13 @@ export function deleteLayer(layer) {
 export function transformLayer(layer) {
     return {
         type: ActionType.TRANSFORM_LAYER,
+        payload: layer
+    }
+}
+
+export function revertTransform(layer) {
+    return {
+        type: ActionType.REVERT_TRANSFORM,
         payload: layer
     }
 }

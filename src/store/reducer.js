@@ -124,6 +124,10 @@ export default function (state, action) {
             state.editMode = EditMode.MOVE;
             drawingBoard.hideResizeBox();
             break;
+        case ActionType.REVERT_TRANSFORM:
+            drawingBoard.revertTransform(action.payload);
+            state.editMode = EditMode.MOVE;
+            break;
         default:
 
     }

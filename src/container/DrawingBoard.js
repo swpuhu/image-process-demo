@@ -150,6 +150,11 @@ class DrawingBoard extends Base {
     hideResizeBox() {
         this.resizeBox.hide();
     }
+
+    revertTransform(layer) {
+        this.resizeBox.revert(layer);
+        this.draw();
+    }
     async savePicture() {
         this.draw(this.layers, false);
         let src = this.canvas.ref.toDataURL();
