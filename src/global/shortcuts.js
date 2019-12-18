@@ -8,7 +8,9 @@ import EditMode from '../Enum/EditMode';
  * @param {MouseEvent} e 
  */
 function keydown(e) {
-    e.preventDefault();
+    if (e.key !== 'F12' && e.key !== 'F5') {
+        e.preventDefault();
+    }
     e.stopPropagation();
 
     let group = getKeys(e);
