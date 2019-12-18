@@ -197,6 +197,40 @@ function throttle(fn, delay = 50) {
     }
 }
 
+
+function isArray(arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
+}
+
+function isObject(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+}
+
+function deepCopy(obj) {
+    let ret;
+    if (isArray(obj)) {
+        ret = [];
+        for (let item of obj) {
+            if (isArray(item) || isObject(item)) {
+                ret.push(deepCopy(item));
+            } else {
+                ret.push(item);
+            }
+        }
+    } else {
+        ret = {};
+        for (let key in obj) {
+            if (isArray(obj[key]) || isObject(obj[key])) {
+                ret[key] = deepCopy(obj[key]);
+            } else {
+                ret[key] = obj[key];
+            }
+        }
+    }
+
+    return ret;
+}
+
 export default {
     generateDOM,
     getSingleton,
@@ -206,5 +240,6 @@ export default {
     loadImage,
     r2d,
     d2r,
-    throttle
+    throttle,
+    deepCopy
 }
