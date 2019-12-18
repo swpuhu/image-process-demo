@@ -197,6 +197,23 @@ function throttle(fn, delay = 50) {
     }
 }
 
+
+function debounce(fn, delay = 50) {
+    let timer;
+    return function () {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+    }
+}
+
+function isArray(arr) {
+    return Object.prototype.toString.call(arr) === '[object Array]';
+}
+
+function isObject(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+}
+
 export default {
     generateDOM,
     getSingleton,
@@ -206,5 +223,6 @@ export default {
     loadImage,
     r2d,
     d2r,
-    throttle
+    throttle,
+    debounce,
 }
