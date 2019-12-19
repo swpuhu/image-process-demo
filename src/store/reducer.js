@@ -115,6 +115,9 @@ export default function (state, action) {
             drawingBoard.revertTransform(action.payload);
             state.editMode = EditMode.MOVE;
             break;
+        case ActionType.UPDATE_STAMP:
+            break;
+
         default:
 
     }

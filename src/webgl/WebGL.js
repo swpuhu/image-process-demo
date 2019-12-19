@@ -4,6 +4,7 @@ import util from '../util/util';
 import store from '../store/index';
 import StepType from '../Enum/StepType';
 import BlendFilter from './filter/Blend';
+import { updateStamp } from '../store/action';
 
 
 export default class RenderContext {
@@ -69,9 +70,17 @@ export default class RenderContext {
         this.tempFramebuffer = null;
         this.width = width;
         this.height = height;
+        this.cacheLayer;
+        this.canvas
 
     }
     renderSingleLayer(layer) {
+        let strLayer = JSON.stringify(layer)
+        if (this.cacheLayer !== strLayer) {
+            this.cacheLayer = strLayer;
+        } else {
+            return;
+        }
         let Width = store.state.width;
         let Height = store.state.height;
         let x1 = layer.style.x1;
@@ -109,8 +118,13 @@ export default class RenderContext {
         }
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+        store.dispatch(updateStamp(
+            layer,
+            this.canvas
+        ));
         this.cachedImage = true;
     }
+
 
     render(canvases) {
         for (let i = 0; i < canvases.length; i++) {
