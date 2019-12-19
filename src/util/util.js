@@ -1,5 +1,5 @@
 function generateDOM(t) {
-    function createElement(tagName, isSVG, classList, text, title, attributes, props) {
+    function createElement(tagName, isSVG, classList, text, title, attributes, props, styles) {
         let doc;
         if (isSVG) {
             doc = document.createElementNS('http://www.w3.org/2000/svg', tagName);
@@ -16,6 +16,14 @@ function generateDOM(t) {
         if (props) {
             for (let prop in props) {
                 doc[prop] = props[prop];
+            }
+        }
+
+        
+
+        if (styles) {
+            for (let style in styles) {
+                doc.style[style] = styles[style];
             }
         }
 
@@ -66,7 +74,11 @@ function generateDOM(t) {
                 refs[current.template.ref] = dom;
             }
         } else {
-            dom = createElement(current.template.tagName, isSVG, current.template.classList, current.template.text, current.template.title, current.template.attributes, current.template.props);
+            dom = createElement(
+                current.template.tagName, isSVG, current.template.classList, 
+                current.template.text, current.template.title, current.template.attributes, 
+                current.template.props, current.template.styles
+                );
             if (current.template.ref) {
                 refs[current.template.ref] = dom;
             }
@@ -202,7 +214,9 @@ function debounce(fn, delay = 50) {
     let timer;
     return function () {
         clearTimeout(timer);
-        timer = setTimeout(fn, delay);
+        timer = setTimeout(() => {
+            fn.apply(this, arguments);
+        }, delay);
     }
 }
 

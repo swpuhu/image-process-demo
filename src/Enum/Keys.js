@@ -22,27 +22,27 @@ export const Keys = {
 export const ShortCuts = {
     transform: {
         group: FunctionKeys.shift,
-        key: /T/i
+        key: /^T$/i
     },
     hideResizeBox: {
         group: FunctionKeys.none,
-        key: /Enter/i
+        key: /^Enter$/i
     },
     revertTransform: {
         group: FunctionKeys.none,
-        key: /Escape/i
+        key: /^Escape$/i
     },
     copy: {
         group: FunctionKeys.ctrl,
-        key: /C/i
+        key: /^C$/i
     },
     paste: {
         group: FunctionKeys.ctrl,
-        key: /V/i
+        key: /^V$/i
     },
     delete: {
         group: FunctionKeys.none,
-        key: /Delete/i
+        key: /^Delete$/i
     }
 }
 

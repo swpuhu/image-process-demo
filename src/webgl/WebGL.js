@@ -71,7 +71,8 @@ export default class RenderContext {
         this.width = width;
         this.height = height;
         this.cacheLayer;
-        this.canvas
+        this.canvas = canvas;
+        this.updateStamp = util.debounce(this.updateStamp);
 
     }
     renderSingleLayer(layer) {
@@ -118,15 +119,23 @@ export default class RenderContext {
         }
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
-        store.dispatch(updateStamp(
-            layer,
-            this.canvas
-        ));
+        this.updateStamp(layer);
         this.cachedImage = true;
     }
 
 
+    updateStamp(layer) {
+        store.dispatch(updateStamp(
+            layer,
+            this.canvas
+        ));
+    }
+
     render(canvases) {
+        if (!canvases.length) {
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+            return;
+        }
         for (let i = 0; i < canvases.length; i++) {
             let canvas = canvases[i];
             canvas.canvas.renderContext.renderSingleLayer(canvas.layer);

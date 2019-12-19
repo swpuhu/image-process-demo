@@ -47,10 +47,11 @@ export default function (state, action) {
             state.clipboard.content = util.deepCopy(action.payload);
             break;
         case ActionType.PASTE_LAYER:
-            state.layers.unshift(state.clipboard.content);
-            state.currentLayer = [state.clipboard.content];
-            drawingBoard.addCanvas(state.clipboard.content);
-            layerInfo.addLayer(state.clipboard.content);
+            let content = util.deepCopy(state.clipboard.content);
+            state.layers.unshift(content);
+            state.currentLayer = [content];
+            drawingBoard.addCanvas(content);
+            layerInfo.addLayer(content);
             break;
         case ActionType.CHANGE_ZOOM:
             state.zoom = action.payload;
@@ -116,6 +117,7 @@ export default function (state, action) {
             state.editMode = EditMode.MOVE;
             break;
         case ActionType.UPDATE_STAMP:
+            layerInfo.updateStamp(action.payload)
             break;
 
         default:

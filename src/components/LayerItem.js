@@ -26,7 +26,14 @@ export default class LayerItem {
                         {
                             tagName: 'img',
                             classList: ['layer-item__stamp'],
-                            ref: 'stamp'
+                            ref: 'stamp',
+                            props: {
+                                width: 80,
+                                height: 50
+                            },
+                            styles: {
+                                transform: 'scaleY(-1)'
+                            }
                         },
                         {
                             tagName: 'div',
@@ -103,13 +110,14 @@ export default class LayerItem {
         })
 
 
-        stamp.src = util.generateStamp(this.layer.image);
+        // stamp.src = util.generateStamp(this.layer.image);
+        this.stamp = stamp;
         return root;
     }
 
 
     updateStamp(src) {
-        stamp.src = src;
+        this.stamp.src = src;
     }
 
     active() {

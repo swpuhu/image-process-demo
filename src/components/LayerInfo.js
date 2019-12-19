@@ -70,6 +70,13 @@ class LayerInfo extends Base {
         }
     }
 
+    updateStamp({layer, canvas}) {
+        let item = this.layerInfoItems.find(it => it.layer === layer);
+        if (item) {
+            item.updateStamp(canvas.toDataURL());
+        }
+    }
+
 
 }
 
