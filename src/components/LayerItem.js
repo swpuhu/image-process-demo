@@ -107,6 +107,11 @@ export default class LayerItem {
         return root;
     }
 
+
+    updateStamp(src) {
+        stamp.src = src;
+    }
+
     active() {
         this.isActive = true;
         this.ref.classList.add('active');

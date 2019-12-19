@@ -9,7 +9,7 @@ export default {
     currentTool: null,
     editMode: EditMode.MOVE,
     currentLayer: [],
-    clipBoard: {
+    clipboard: {
         type: null,
         content: null
     }

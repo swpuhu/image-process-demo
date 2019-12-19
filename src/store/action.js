@@ -15,6 +15,7 @@ export const ActionType = {
     REVERT_TRANSFORM: 12,
     COPY_LAYER: 13,
     PASTE_LAYER: 14,
+    UPDATE_STAMP: 15,
 }
 
 export function openFile(layer) {
@@ -128,5 +129,16 @@ export function copyLayer(layer) {
 export function pasteLayer() {
     return {
         type: ActionType.PASTE_LAYER
+    }
+}
+
+
+export function updateStamp(layer, canvas) {
+    return {
+        type: ActionType.UPDATE_STAMP,
+        payload: {
+            layer: layer,
+            canvas: canvas
+        }
     }
 }

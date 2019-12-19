@@ -6,6 +6,8 @@ import EditMode from '../Enum/EditMode';
 import DrawingBoard from '../container/DrawingBoard';
 import LayerInfo from '../components/LayerInfo';
 import TOOLTYPE from '../Enum/ToolType';
+import ClipboardType from '../Enum/ClipboardType';
+import util from '../util/util';
 
 export default function (state, action) {
     let drawingBoard = new DrawingBoard();
@@ -41,9 +43,14 @@ export default function (state, action) {
             layerInfo.addLayer(action.payload);
             break;
         case ActionType.COPY_LAYER:
-            state.layers.unshift(action.payload);
-            drawingBoard.addCanvas(action.payload);
-            layerInfo.addLayer(action.payload);
+            state.clipboard.type = ClipboardType.Layer
+            state.clipboard.content = util.deepCopy(action.payload);
+            break;
+        case ActionType.PASTE_LAYER:
+            state.layers.unshift(state.clipboard.content);
+            state.currentLayer = [state.clipboard.content];
+            drawingBoard.addCanvas(state.clipboard.content);
+            layerInfo.addLayer(state.clipboard.content);
             break;
         case ActionType.CHANGE_ZOOM:
             state.zoom = action.payload;
@@ -108,6 +115,9 @@ export default function (state, action) {
             drawingBoard.revertTransform(action.payload);
             state.editMode = EditMode.MOVE;
             break;
+        case ActionType.UPDATE_STAMP:
+            break;
+
         default:
 
     }
