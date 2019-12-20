@@ -1,9 +1,11 @@
 import Base from '../util/Base';
 import util from '../util/util';
-class DropListItem {
-    constructor(alias, value) {
+class DropListItem extends Base{
+    constructor(alias, value, onclick) {
+        super();
         this.alias = alias;
         this.value = value;
+        this.onclick = onclick;
         this.ref = this.render();
     }
 
@@ -11,12 +13,16 @@ class DropListItem {
         let template = {
             tagName: 'div',
             classList: ['droplist-item'],
-            text: this.alias
+            text: this.alias,
         }
 
         let {
             root
         } = util.generateDOM(template);
+        root.addEventListener('click', () => {
+            this.dispatch('change', this.alias, this.value);
+            this.onclick();
+        });
         return root;
     }
 }
@@ -27,22 +33,29 @@ export default class SelectBox extends Base {
     constructor(dropList) {
         super();
         this.dropList = dropList;
+        this.isShow = false;
+        this.show = this.show.bind(this);
+        this.hide = this.hide.bind(this);
+        this.dropListItem = []
         this.ref = this.render();
-        this.show = false;
+        console.log(this.eventList);
     }
 
     render() {
         let dropListTemplate = {
             tagName: 'div',
-            classList: ['select-droplist', 'disappear'],
+            classList: ['select-droplist', 'hide'],
             ref: 'dropList',
             children: [],
         }
 
         for (let item of this.dropList) {
+            let dropListItem = new DropListItem(item.alias, item.value, this.hide)
             dropListTemplate.children.push({
-                component: new DropListItem(item.alias, item.value)
+                component: dropListItem
             })
+            this.dropListItem.push(dropListItem);
+
         }
 
         let template = {
@@ -65,16 +78,34 @@ export default class SelectBox extends Base {
         } = util.generateDOM(template);
 
         let that = this;
+        display.textContent = this.dropListItem[0].alias;
+        this.dropListItem.forEach(item => {
+            item.on('change', function (name, value) {
+                display.textContent = name;
+                that.dispatch('change', name, value)
+            })
+        })
+
+
         display.onclick = function () {
-            if (that.show) {
-                dropList.classList.add('disappear');
-                that.show = false;
+            if (that.isShow) {
+                that.hide();
             } else {
-                dropList.classList.remove('disappear');
-                that.show = true;
+                that.show();
             }
 
         }
+        this.dropList = dropList;
         return root;
+    }
+
+    hide() {
+        this.dropList.classList.add('hide');
+        this.isShow = false;
+    }
+
+    show() {
+        this.dropList.classList.remove('hide');
+        this.isShow = true;
     }
 }
