@@ -1,0 +1,31 @@
+.select-box {
+  width: 100px;
+  height: 20px;
+}
+.select-box .select-display {
+  width: 100%;
+  height: 100%;
+  line-height: 20px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #303030;
+}
+.select-box .select-droplist {
+  position: absolute;
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #303030;
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+  z-index: 10;
+}
+.select-box .select-droplist .droplist-item {
+  padding: 2px 0;
+}
+.select-box .select-droplist .droplist-item:hover {
+  background-color: #3b97ec;
+}
+.select-box .select-droplist.disappear {
+  opacity: 0;
+}

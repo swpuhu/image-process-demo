@@ -1,0 +1,22 @@
+export default {
+    NORMAL: '正常',
+    MULTIPLY: '正片叠底',
+    DARKEN: '变暗',
+    LIGHTEN: '变亮',
+    COLOR_FILTER: '滤色',
+    COLOR_BURN: '颜色加深',
+    COLOR_DODGE: '颜色减淡',
+    LINEAR_BURN: '线性加深',
+    LINEAR_DODGE: '线性减淡',
+    OVERLAY: '叠加',
+    HARD_LIGHT: '强光',
+    SOFT_LIGHT: '柔光',
+    BRIGHT_LIGHT: '亮光',
+    POINT_LIGHT: '点光',
+    LINEAR_LIGTH: '线性光',
+    HARD_MIX: '实色混合',
+    EXCLUDE: '排除',
+    DIFF: '差值',
+    ADD: '相加',
+    MINUS: '相减'
+}

@@ -10,10 +10,13 @@ class DropListItem {
     render() {
         let template = {
             tagName: 'div',
+            classList: ['droplist-item'],
             text: this.alias
         }
 
-        let {root} = util.generateDOM(template);
+        let {
+            root
+        } = util.generateDOM(template);
         return root;
     }
 }
@@ -25,25 +28,27 @@ export default class SelectBox extends Base {
         super();
         this.dropList = dropList;
         this.ref = this.render();
+        this.show = false;
     }
 
     render() {
         let dropListTemplate = {
             tagName: 'div',
-            classList: ['select-droplist'],
+            classList: ['select-droplist', 'disappear'],
             ref: 'dropList',
             children: [],
         }
 
         for (let item of this.dropList) {
-            dropListTemplate.children.push(new DropListItem(item.alias, item.value))
+            dropListTemplate.children.push({
+                component: new DropListItem(item.alias, item.value)
+            })
         }
-        
+
         let template = {
             tagName: 'div',
             classList: ['select-box'],
-            children: [
-                {
+            children: [{
                     tagName: 'div',
                     classList: ['select-display'],
                     ref: 'display'
@@ -52,7 +57,24 @@ export default class SelectBox extends Base {
             ]
         }
 
-        let {root, dropList, display} = util.generateDOM(template);
+
+        let {
+            root,
+            dropList,
+            display
+        } = util.generateDOM(template);
+
+        let that = this;
+        display.onclick = function () {
+            if (that.show) {
+                dropList.classList.add('disappear');
+                that.show = false;
+            } else {
+                dropList.classList.remove('disappear');
+                that.show = true;
+            }
+
+        }
         return root;
     }
 }

@@ -2,34 +2,51 @@ import Base from '../util/Base';
 import store from '../store/index';
 import util from '../util/util';
 import LayerContextMenu from './LayerContextMenu';
+import LayerProps from './LayerProps';
 import Item from './LayerItem';
 
 class LayerInfo extends Base {
     constructor() {
         super();
-        this.ref = this.render();
         this.layerInfoItems = [];
         this.clearAllActive = this.clearAllActive.bind(this);
         this.changeLayer = this.changeLayer.bind(this);
         this.contextMenu = new LayerContextMenu();
+        this.layerProps = new LayerProps();
+        this.ref = this.render();
     }
 
     render() {
-        let template = {
+        let layerInfoTemplate = {
             tagName: 'div',
             classList: ['layer-info'],
-            children: []
+            children: [],
+            ref: 'layerInfo'
         }
         for (let i = 0; i < store.state.layers.length; i++) {
-            template.unshift({
+            layerInfoTemplate.unshift({
                 component: new Item(store.state.layers[i])
             })
         }
-        let root = util.generateDOM(template).root;
+
+        let template = {
+            tagName: 'div',
+            classList: ['layer-panel'],
+            children: [
+                {
+                    component: this.layerProps
+                },
+                layerInfoTemplate
+            ]
+        }
+
+
+        let {root, layerInfo} = util.generateDOM(template);
         let that = this;
-        root.addEventListener('contextmenu', function (e) {
+        layerInfo.addEventListener('contextmenu', function (e) {
             that.contextMenu.show(e);
         })
+        this.layerInfo = layerInfo;
 
         return root;
     }
@@ -45,9 +62,9 @@ class LayerInfo extends Base {
         item.active();
         let firstChild = this.layerInfoItems[0];
         if (firstChild) {
-            this.ref.insertBefore(item.ref, firstChild.ref);
+            this.layerInfo.insertBefore(item.ref, firstChild.ref);
         } else {
-            this.ref.appendChild(item.ref);
+            this.layerInfo.appendChild(item.ref);
         }
         this.layerInfoItems.unshift(item);
         
