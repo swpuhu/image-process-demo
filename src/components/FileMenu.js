@@ -7,7 +7,8 @@ import StepType from '../Enum/StepType';
 import {
     openFile,
     changeZoom,
-    savePicture
+    savePicture,
+    newProject
 } from '../store/action';
 import util from '../util/util';
 
@@ -53,6 +54,40 @@ class FileMenu extends Base {
                 URL.revokeObjectURL(url);
                 createImageBitmap(image)
                     .then(img => {
+                        let zoomX = image.width / (window.innerWidth - 500);
+                        let zoomY = image.height / (window.innerHeight - 100);
+                        let zoom = Math.max(zoomX, zoomY);
+                        if (zoom < 1) {
+                            zoom = 1;
+                        }
+                        let isFirst = false;
+                        if (!store.state.layers.length) {
+                            isFirst = true;
+                            store.dispatch(newProject({
+                                width: image.width,
+                                height: image.height,
+                                name: 'New Project'
+                            }))
+
+                        }
+
+                        let style;
+                        style = {
+                            x1: (store.state.width - image.width) / 2,
+                            y1: (store.state.height - image.height) / 2,
+            
+                            x2: (store.state.width + image.width) / 2,
+                            y2: (store.state.height - image.height) / 2,
+            
+                            x3: (store.state.width + image.width) / 2,
+                            y3: (store.state.height + image.height) / 2,
+            
+                            x4: (store.state.width - image.width) / 2,
+                            y4: (store.state.height + image.height) / 2,
+            
+                            rotate: 0
+                        }
+                        
 
                         let layer = {
                             width: image.width,
@@ -62,21 +97,12 @@ class FileMenu extends Base {
                             image: img,
                             name: util.deletePostfix(file.name),
                             steps: [
-                                new MoveStep(StepType.MOVE)
-                            ]
+                            ],
+                            style: style
                         };
-                        let zoomX = image.width / (window.innerWidth - 500);
-                        let zoomY = image.height / (window.innerHeight - 100);
-                        let zoom = Math.max(zoomX, zoomY);
-                        if (zoom < 1) {
-                            zoom = 1;
-                        }
-                        if (!store.state.layers.length) {
-                            store.dispatch(openFile(layer));
+                        store.dispatch(openFile(layer));
+                        if (isFirst) {
                             store.dispatch(changeZoom(zoom));
-                        } else {
-                            store.dispatch(openFile(layer));
-                            // store.dispatch(changeZoom(zoom));
                         }
                     })
             }

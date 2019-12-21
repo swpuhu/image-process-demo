@@ -253,6 +253,20 @@ function deepCopy(obj) {
     return ret;
 }
 
+
+function autoAdaption(width, height, containerWidth, containerHeight) {
+    let aspect = width / height;
+    let containerAspect = containerWidth / containerHeight;
+    if (width <= containerWidth && height <= containerHeight) {
+        // No Adaption
+    } else if (aspect >= containerAspect) {
+        // Horizontal Adaption
+
+    } else {
+    }
+    
+}
+
 export default {
     generateDOM,
     getSingleton,

@@ -16,7 +16,19 @@ export const ActionType = {
     COPY_LAYER: 13,
     PASTE_LAYER: 14,
     UPDATE_STAMP: 15,
+    NEW_PROJECT: 16
 }
+export function newProject({width, height, name}) {
+    return {
+        type: ActionType.NEW_PROJECT,
+        payload: {
+            name,
+            width,
+            height
+        }
+    }
+}
+
 
 export function openFile(layer) {
     return {

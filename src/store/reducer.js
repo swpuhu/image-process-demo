@@ -14,29 +14,16 @@ export default function (state, action) {
     let layerInfo = new LayerInfo();
     let sourceIndex, targetIndex;
     switch (action.type) {
+        case ActionType.NEW_PROJECT:
+            state.width = action.payload.width;
+            state.height = action.payload.height;
+            drawingBoard.init(state.width, state.height);
+            break;
         case ActionType.OPEN_FILE:
-            if (!state.layers.length) {
-                state.width = action.payload.width;
-                state.height = action.payload.height;
-                drawingBoard.init(state.width, state.height);
-            }
-            let style = {
-                x1: (state.width - action.payload.width) / 2,
-                y1: (state.height - action.payload.height) / 2,
-
-                x2: (state.width + action.payload.width) / 2,
-                y2: (state.height - action.payload.height) / 2,
-
-                x3: (state.width + action.payload.width) / 2,
-                y3: (state.height + action.payload.height) / 2,
-
-                x4: (state.width - action.payload.width) / 2,
-                y4: (state.height + action.payload.height) / 2,
-
-                rotate: 0
-            };
-            style.rotate = 0;
-            action.payload.style = style;
+            // if (!state.layers.length) {
+            //     state.width = action.payload.width;
+            //     state.height = action.payload.height;
+            // }
             state.layers.unshift(action.payload);
             state.currentLayer = [action.payload];
             drawingBoard.addCanvas(action.payload);
