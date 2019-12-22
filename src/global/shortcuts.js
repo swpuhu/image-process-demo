@@ -8,7 +8,7 @@ import EditMode from '../Enum/EditMode';
  * @param {MouseEvent} e 
  */
 function keydown(e) {
-    if (e.key !== 'F12' && e.key !== 'F5') {
+    if (e.key !== 'F12' && e.key !== 'F5' && e.target.tagName !== 'INPUT') {
         e.preventDefault();
     }
     e.stopPropagation();

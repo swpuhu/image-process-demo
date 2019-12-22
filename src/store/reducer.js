@@ -84,7 +84,7 @@ export default function (state, action) {
             }
             break;
         case ActionType.SAVE_PICTURE:
-            drawingBoard.savePicture();
+            drawingBoard.savePicture(action.payload.width, action.payload.height);
             break;
         case ActionType.TRANSFORM_LAYER:
             if (state.editMode === EditMode.TRANSFORM) return;

@@ -89,9 +89,10 @@ export function drawLayer(layer) {
 }
 
 
-export function savePicture() {
+export function savePicture(props) {
     return {
-        type: ActionType.SAVE_PICTURE
+        type: ActionType.SAVE_PICTURE,
+        payload: props
     }
 }
 

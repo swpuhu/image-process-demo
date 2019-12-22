@@ -1,5 +1,5 @@
-import Base from '../util/Base';
-import util from '../util/util';
+import Base from '../../util/Base';
+import util from '../../util/util';
 class DropListItem extends Base{
     constructor(alias, value, onclick) {
         super();

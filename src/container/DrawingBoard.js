@@ -102,7 +102,7 @@ class DrawingBoard extends Base {
         this.layers.unshift({
             layer: layer,
             canvas: canvas,
-            offCanvas: offCanvas
+            // offCanvas: offCanvas
         });
         this.draw();
         this.draw();

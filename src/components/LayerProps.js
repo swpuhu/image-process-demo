@@ -1,6 +1,6 @@
 import Base from '../util/Base';
 import util from '../util/util';
-import SelectBox from './SelectBox';
+import SelectBox from './baseUI/SelectBox';
 import BlendMode from '../Enum/BlendMode';
 import BlendModeDict from '../Enum/BlendModeDict';
 

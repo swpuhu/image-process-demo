@@ -63,6 +63,7 @@ function generateDOM(t) {
     while (queue.length) {
         let current = queue.shift();
         let dom;
+        if (!current.template) continue;
         if (current.template.component) {
             if (current.template.component instanceof HTMLElement) {
                 dom = current.template.component;

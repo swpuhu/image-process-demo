@@ -1,9 +1,6 @@
 import Base from '../util/Base';
 import store from '../store/index';
-import {
-    MoveStep
-} from '../Enum/Step';
-import StepType from '../Enum/StepType';
+import ModalBox from './SaveFilePromptBox';
 import {
     openFile,
     changeZoom,
@@ -101,7 +98,12 @@ class FileMenu extends Base {
             that.openFileByClick();
         });
         let saveFile = new Item('保存文件', function () {
-            store.dispatch(savePicture());
+            let modalBox = new ModalBox('提示', function (props) {
+                store.dispatch(savePicture(props));
+                
+
+            })
+            
         })
         let template = {
             tagName: 'div',

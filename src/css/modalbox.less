@@ -1,0 +1,60 @@
+@modalBoxbackgroundColor: #272727;
+
+
+.modal-box {
+    position: fixed;
+    color: @fontColor;
+    z-index: 1000000;
+    min-width: 300px;
+    background-color: @modalBoxbackgroundColor;
+    border-radius: 10px;
+    border: 1px solid @borderColor;
+
+    .modal-box__caption {
+        padding: 10px;
+        border-bottom: 1px solid @borderColor;
+        cursor: move;
+    }
+
+
+    .modal-box__body {
+        .input-savefile {
+            display: flex;
+            justify-content: space-around;
+            .savefile-input {
+                width: 60px;
+                background-color: @backgroundColor;
+                border: 1px solid @iconActiveColor;
+                border-radius: 5px;
+                padding: 5px;
+                color: @fontColor;
+                outline: none;
+                &::-webkit-inner-spin-button {
+                    display: none;
+                }
+            }
+            .savefile-text {
+                margin: 10px;
+            }
+        }
+    }
+
+    .modal-box__footer {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+
+        .footer-okbtn {
+            min-width: 100px;
+            background: #000;
+            padding: 5px 0;
+            text-align: center;
+            border-radius: 5px;
+            background-color: @backgroundColor;
+            cursor: pointer;
+            &:hover {
+                background-color: @iconActiveColor;
+            }
+        }
+    }
+}

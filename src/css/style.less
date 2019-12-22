@@ -1,6 +1,8 @@
 @import './variables.less';
 @import './toolbox.less';
 @import './selectbox.less';
+@import './modalbox.less';
+
 
 body {
     margin: 0;
@@ -54,6 +56,7 @@ canvas {
     height: @headerHeight;
     border-bottom: 1px solid @borderColor;
     box-sizing: border-box;
+    color: @fontColor;
     .menu-droplist {
         width: 100px;
         margin-top: 5px;
@@ -78,6 +81,7 @@ canvas {
     right: 0;
     z-index: -1;
     right: @rightInfoWidth;
+    color: @fontColor;
     .drawing-board {
         font-size: 0;
         box-shadow: 0 0 5px 1px @borderColor;
@@ -219,6 +223,7 @@ canvas {
     right: 0;
     width: @rightInfoWidth;
     border-left: 1px solid @borderColor;
+    color: @fontColor;
 
     .layer-info {
         height: 500px;
@@ -251,13 +256,14 @@ canvas {
 
 
 .context-menu {
+    z-index: 99999;
     width: 120px;
     border: 1px solid @borderColor;
     padding: 5px;
+    color: @fontColor;
     background-color: #2f2f2f;
     box-shadow: 0 0 3px 1px #000;
     overflow: hidden;
-    z-index: 99999;
     &.active {
         opacity: 1;
         transition: opacity 0.5s;
