@@ -93,18 +93,19 @@ class DrawingBoard extends Base {
         let canvas;
         let offCanvas;
         if (store.state.width && store.state.height) {
-            canvas = new Canvas(store.state.width, store.state.height);
-            offCanvas = new Canvas(store.state.width, store.state.height);
+            // canvas = new Canvas(store.state.width, store.state.height);
+            // offCanvas = new Canvas(store.state.width, store.state.height);
         } else {
-            canvas = new Canvas(layer.width, layer.height);
-            offCanvas = new Canvas(layer.width, layer.height);
+            // canvas = new Canvas(layer.width, layer.height);
+            // offCanvas = new Canvas(layer.width, layer.height);
         }
+        this.canvas.renderContext.addLayer(layer);
         this.layers.unshift({
             layer: layer,
-            canvas: canvas,
+            // canvas: canvas,
             // offCanvas: offCanvas
         });
-        this.draw();
+        // this.draw();
         this.draw();
     }
 
@@ -124,8 +125,8 @@ class DrawingBoard extends Base {
         this.ref.style.width = width + 'px';
         this.ref.style.height = height + 'px'
         this.layers.forEach(layer => {
-            layer.canvas.ref.style.width = width + 'px';
-            layer.canvas.ref.style.height = height + 'px';
+            // layer.canvas.ref.style.width = width + 'px';
+            // layer.canvas.ref.style.height = height + 'px';
         });
         this.canvas.ref.style.width = width + 'px';
         this.canvas.ref.style.height = height + 'px';

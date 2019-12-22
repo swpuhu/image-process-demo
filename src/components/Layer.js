@@ -1,6 +1,6 @@
 import Base from '../util/Base';
 import util from '../util/util';
-import RenderContext from '../webgl/WebGL';
+import RenderContext from '../webgl/WebGL2';
 
 export default class Layer extends Base {
     constructor(width, height) {

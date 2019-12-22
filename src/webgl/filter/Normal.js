@@ -16,7 +16,7 @@ export default class NormalFilter {
         uniform mat4 u_scale;
         uniform mat4 u_rotate;
         void main () {
-            gl_Position = u_projection * u_translate * u_scale * u_rotate * a_position;
+            gl_Position = u_projection * u_translate * u_scale * u_rotate * a_position * vec4(1.0, -1.0, 1.0, 1.0);
             v_texCoord = a_texCoord;
         }
         `;
