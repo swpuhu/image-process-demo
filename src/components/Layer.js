@@ -16,11 +16,21 @@ export default class Layer extends Base {
         this.renderContext = new RenderContext(this.ref);
     }
 
-    render(layer) {
-        this.renderContext.render(layer);
+    render(layer, renderResolution) {
+        this.renderContext.render(layer, renderResolution);
+    }
+
+    offRender(layer, renderResolution) {
+        this.renderContext.offRender(layer, renderResolution);
     }
 
     remove() {
         this.ref.remove();
+    }
+
+    viewport(x, y, width, height) {
+        this.ref.width = width;
+        this.ref.height = height;
+        this.renderContext.viewport(x, y, width, height);
     }
 }

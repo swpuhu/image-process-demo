@@ -75,11 +75,11 @@ export default class RenderContext {
         this.updateStamp = util.debounce(this.updateStamp);
 
     }
-    renderSingleLayer(layer) {
+    renderSingleLayer(layer, renderResolution) {
         let strLayer = JSON.stringify(layer)
         if (this.cacheLayer !== strLayer) {
             this.cacheLayer = strLayer;
-        } else {
+        } else if (!renderResolution) {
             return;
         }
         let Width = store.state.width;
@@ -92,8 +92,19 @@ export default class RenderContext {
         let y2 = layer.style.y2;
         let y3 = layer.style.y3;
         let y4 = layer.style.y4;
-        let centerX = (x1 + x2) / 2;
-        let centerY = (y1 + y3) / 2;
+        let prevWidth = this.width;
+        let prevHeight = this.height;
+        if (renderResolution) {
+            x1 = x1 / store.state.width * renderResolution.width;
+            x2 = x2 / store.state.width * renderResolution.width;
+            x3 = x3 / store.state.width * renderResolution.width;
+            x4 = x4 / store.state.width * renderResolution.width;
+
+            y1 = y1 / store.state.height * renderResolution.height;
+            y2 = y2 / store.state.height * renderResolution.height;
+            y3 = y3 / store.state.height * renderResolution.height;
+            y4 = y4 / store.state.height * renderResolution.height;
+        }
         let points = [
             x1, y1, 0.0, 0.0,
             x2, y2, 1.0, 0.0,
@@ -121,6 +132,11 @@ export default class RenderContext {
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
         this.updateStamp(layer);
         this.cachedImage = true;
+        // if (renderResolution) {
+        //     this.canvas.width = prevWidth;
+        //     this.canvas.height = prevHeight;
+        //     this.viewport(0, 0, prevWidth, prevHeight);
+        // }
     }
 
 
@@ -131,14 +147,14 @@ export default class RenderContext {
         ));
     }
 
-    render(canvases) {
+    render(canvases, renderResolution) {
         if (!canvases.length) {
             this.gl.clear(this.gl.COLOR_BUFFER_BIT);
             return;
         }
         for (let i = 0; i < canvases.length; i++) {
             let canvas = canvases[i];
-            canvas.canvas.renderContext.renderSingleLayer(canvas.layer);
+            canvas.canvas.renderContext.renderSingleLayer(canvas.layer, renderResolution);
         }
 
         let points = [
@@ -154,6 +170,33 @@ export default class RenderContext {
 
         let images = canvases.map(item => item.canvas.ref);
         this.blendLayers(images);
+    }
+
+    offRender(canvases, renderResolution) {
+        if (!canvases.length) {
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+            return;
+        }
+        for (let i = 0; i < canvases.length; i++) {
+            let canvas = canvases[i];
+            canvas.offCanvas.renderContext.renderSingleLayer(canvas.layer, renderResolution);
+        }
+
+        let points = [
+            0.0, 0.0, 0.0, 0.0,
+            this.width, 0, 1.0, 0.0,
+            this.width, this.height, 1.0, 1.0,
+            this.width, this.height, 1.0, 1.0,
+            0.0, this.height, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.0
+        ]
+        points = new Float32Array(points);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
+
+        let images = canvases.map(item => item.canvas.ref);
+        this.blendLayers(images);
+    
+
     }
 
 

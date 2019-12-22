@@ -16,9 +16,9 @@ class DrawingBoard extends Base {
         super();
         this.ref = this.render();
         this.layers = [];
-        this.offCanvas = new OffCanvas(300, 150);
         this.resizeBox = new ResizeBox(this.ref);
         this.canvas = null;
+        this.saveCanvas = new Canvas(300, 150);
         // document.body.appendChild(this.offCanvas.canvas);
     }
 
@@ -91,14 +91,18 @@ class DrawingBoard extends Base {
 
     addCanvas(layer) {
         let canvas;
+        let offCanvas;
         if (store.state.width && store.state.height) {
             canvas = new Canvas(store.state.width, store.state.height);
+            offCanvas = new Canvas(store.state.width, store.state.height);
         } else {
             canvas = new Canvas(layer.width, layer.height);
+            offCanvas = new Canvas(layer.width, layer.height);
         }
         this.layers.unshift({
             layer: layer,
-            canvas: canvas
+            canvas: canvas,
+            offCanvas: offCanvas
         });
         this.draw();
         this.draw();
@@ -117,7 +121,6 @@ class DrawingBoard extends Base {
 
         let width = ~~(store.state.width / zoom);
         let height = ~~(store.state.height / zoom);
-        this.offCanvas.changeZoom(store.state.width, store.state.height);
         this.ref.style.width = width + 'px';
         this.ref.style.height = height + 'px'
         this.layers.forEach(layer => {
@@ -155,10 +158,16 @@ class DrawingBoard extends Base {
         this.resizeBox.revert(layer);
         this.draw();
     }
-    async savePicture() {
-        this.draw(this.layers, false);
-        let src = this.canvas.ref.toDataURL();
+    async savePicture(width = store.state.originWidth, height = store.state.originHeight) {
+        this.layers.forEach(item => {
+            item.offCanvas.viewport(0, 0, width, height);
+        })
+        this.saveCanvas.viewport(0, 0, width, height);
+        this.saveCanvas.offRender(this.layers, {width, height});
+        this.saveCanvas.offRender(this.layers, {width, height});
+        let src = this.saveCanvas.ref.toDataURL();
         util.downloadBase64(src, 'test.png');
+        this.draw();
     }
 
 

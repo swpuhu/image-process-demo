@@ -13,10 +13,24 @@ export default function (state, action) {
     let drawingBoard = new DrawingBoard();
     let layerInfo = new LayerInfo();
     let sourceIndex, targetIndex;
+    const maxWidth = 960;
+    const maxHeight = 540;
     switch (action.type) {
         case ActionType.NEW_PROJECT:
-            state.width = action.payload.width;
-            state.height = action.payload.height;
+            let width = action.payload.width;
+            let height = action.payload.height;
+            state.originWidth = width;
+            state.originHeight = height;
+            let aspect = width / height;
+            if (width >= maxWidth) {
+                width = maxWidth;
+                height = maxWidth / aspect;
+            } else if (height >= maxHeight) {
+                height = maxHeight;
+                width = maxHeight * aspect;
+            }
+            state.width = width;
+            state.height = height;
             drawingBoard.init(state.width, state.height);
             break;
         case ActionType.OPEN_FILE:

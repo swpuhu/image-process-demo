@@ -257,13 +257,59 @@ function deepCopy(obj) {
 function autoAdaption(width, height, containerWidth, containerHeight) {
     let aspect = width / height;
     let containerAspect = containerWidth / containerHeight;
+    let style = {};
     if (width <= containerWidth && height <= containerHeight) {
-        // No Adaption
+        // No Adaptione: 
+        style = {
+            x1: (containerWidth - width) / 2,
+            y1: (containerHeight - height ) / 2,        
+
+            x2: (containerWidth + width) / 2,
+            y2: (containerHeight - height) / 2,
+
+            x3: (containerWidth + width) / 2,
+            y3: (containerHeight + height) / 2,
+
+            x4: (containerWidth - width) / 2,
+            y4: (containerHeight + height) / 2,
+            
+            rotate: 0
+        }
     } else if (aspect >= containerAspect) {
         // Horizontal Adaption
+        style = {
+            x1: 0,
+            y1: (containerHeight - (containerWidth / aspect)) / 2,
+
+            x2: containerWidth,
+            y2: (containerHeight - (containerWidth / aspect)) / 2,
+
+            x3: containerWidth,
+            y3: (containerHeight + (containerWidth / aspect)) / 2,
+
+            x4: 0,
+            y4: (containerHeight + (containerWidth / aspect)) / 2,
+            
+            rotate: 0
+        }
 
     } else {
+        style = {
+            x1: (containerWidth - (containerHeight * aspect)) / 2,
+            y1: 0,
+
+            x2: (containerWidth + (containerHeight * aspect)) / 2,
+            y2: 0,
+
+            x3: (containerWidth + (containerHeight * aspect)) / 2,
+            y3: containerHeight,
+
+            x4: (containerWidth - (containerHeight * aspect)) / 2,
+            y4: containerHeight,
+            rotate: 0
+        }
     }
+    return style;
     
 }
 
@@ -278,5 +324,6 @@ export default {
     d2r,
     throttle,
     debounce,
-    deepCopy
+    deepCopy,
+    autoAdaption
 }

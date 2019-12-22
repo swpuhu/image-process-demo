@@ -54,12 +54,6 @@ class FileMenu extends Base {
                 URL.revokeObjectURL(url);
                 createImageBitmap(image)
                     .then(img => {
-                        let zoomX = image.width / (window.innerWidth - 500);
-                        let zoomY = image.height / (window.innerHeight - 100);
-                        let zoom = Math.max(zoomX, zoomY);
-                        if (zoom < 1) {
-                            zoom = 1;
-                        }
                         let isFirst = false;
                         if (!store.state.layers.length) {
                             isFirst = true;
@@ -71,23 +65,7 @@ class FileMenu extends Base {
 
                         }
 
-                        let style;
-                        style = {
-                            x1: (store.state.width - image.width) / 2,
-                            y1: (store.state.height - image.height) / 2,
-            
-                            x2: (store.state.width + image.width) / 2,
-                            y2: (store.state.height - image.height) / 2,
-            
-                            x3: (store.state.width + image.width) / 2,
-                            y3: (store.state.height + image.height) / 2,
-            
-                            x4: (store.state.width - image.width) / 2,
-                            y4: (store.state.height + image.height) / 2,
-            
-                            rotate: 0
-                        }
-                        
+                        let style = util.autoAdaption(image.width, image.height, store.state.width, store.state.height);
 
                         let layer = {
                             width: image.width,
@@ -102,6 +80,12 @@ class FileMenu extends Base {
                         };
                         store.dispatch(openFile(layer));
                         if (isFirst) {
+                            let zoomX = store.state.width / (window.innerWidth - 500);
+                            let zoomY = store.state.height / (window.innerHeight - 100);
+                            let zoom = Math.max(zoomX, zoomY);
+                            if (zoom < 1) {
+                                zoom = 1;
+                            }
                             store.dispatch(changeZoom(zoom));
                         }
                     })
