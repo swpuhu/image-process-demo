@@ -15,8 +15,13 @@ export default class NormalFilter {
         uniform mat4 u_translate;
         uniform mat4 u_scale;
         uniform mat4 u_rotate;
+        uniform int u_enableFlipY;
         void main () {
-            gl_Position = u_projection * u_translate * u_scale * u_rotate * a_position * vec4(1.0, -1.0, 1.0, 1.0);
+            if (u_enableFlipY == 1) {
+                gl_Position = u_projection * u_translate * u_scale * u_rotate * a_position * vec4(1.0, -1.0, 1.0, 1.0);
+            } else {
+                gl_Position = u_projection * u_translate * u_scale * u_rotate * a_position;
+            }
             v_texCoord = a_texCoord;
         }
         `;
@@ -47,6 +52,10 @@ export default class NormalFilter {
         let u_resolution = gl.getUniformLocation(program, 'u_resolution');
         gl.uniform2f(u_resolution, gl.canvas.width, gl.canvas.height);
 
+        let  u_enableFlipY = gl.getUniformLocation(program, 'u_enableFlipY');
+        gl.uniform1i(u_enableFlipY, 1);
+
+
         let u_translate = gl.getUniformLocation(program, 'u_translate');
         let u_scale = gl.getUniformLocation(program, 'u_scale');
         let u_rotate = gl.getUniformLocation(program, 'u_rotate');
@@ -73,6 +82,7 @@ export default class NormalFilter {
         this.translateMat = translateMat;
         this.u_projection = u_projection;
         this.u_resolution = u_resolution;
+        this.u_enableFlipY = u_enableFlipY;
         this.program = program;
         this.gl = gl;
     }
@@ -105,6 +115,13 @@ export default class NormalFilter {
         this.gl.uniform2f(this.u_resolution, this.gl.canvas.width, this.gl.canvas.height);
     }
 
+    enableFlipY() {
+        this.gl.uniform1i(this.u_enableFlipY, 1);
+    }
+
+    disableFlipY() {
+        this.gl.uniform1i(this.u_enableFlipY, 0);
+    }
 
 
 } 

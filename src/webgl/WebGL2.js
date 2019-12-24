@@ -17,6 +17,7 @@ export default class RenderContext {
         let gl = canvas.getContext('webgl2', {
             premultipliedAlpha: false
         });
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -50,8 +51,7 @@ export default class RenderContext {
         this.midFramebuffers = [];
         this.midTextures = [];
         this.canvas = canvas;
-        
-        
+        glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
     }
 
 
@@ -83,7 +83,7 @@ export default class RenderContext {
             let _texture = this.textures.find(item => item.layer === layer);
             if (_texture) {
                 this.gl.bindTexture(this.gl.TEXTURE_2D, _texture.texture);
-                this.renderSingleLayer(layer, this.midFramebuffers[i]);
+                this.renderSingleLayer(layer, _texture.texture, this.midFramebuffers[i]);
             }
         }
         let textures = this.midTextures;
@@ -91,7 +91,7 @@ export default class RenderContext {
     }
 
     blendLayers(textures) {
-        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        if (!textures.length) return;
         let points = [
             0.0, 0.0, 0.0, 0.0,
             this.canvas.width, 0, 1.0, 0.0,
@@ -102,49 +102,75 @@ export default class RenderContext {
         ];
         points = new Float32Array(points);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
-        // for (let texture of textures) {
-        //     this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-        //     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);    
-        // }
 
-
-        this.gl.useProgram(this.filters.blend.program);
-        glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
-        let count = 0;
-        for (let texture of textures) {
-            this.gl.activeTexture(this.gl.TEXTURE2);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
-
-            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.blendFramebuffers[count % 2]);
-            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        if (textures.length === 1) {
+            this.gl.useProgram(this.filters.normal.program);
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[0]);
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+            this.filters.normal.enableFlipY();
             this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+        } else if (textures.length === 2) {
+            this.gl.useProgram(this.filters.blend.program);
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[0]);
 
             this.gl.activeTexture(this.gl.TEXTURE1);
-            this.gl.bindTexture(this.gl.TEXTURE_2D,  this.blendTextures[count % 2]);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[1]);
+
+            this.filters.blend.enableFlipY();
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+            this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+        } else if (textures.length >= 3) {
+            let _textures = textures.slice();
+            this.gl.useProgram(this.filters.blend.program);
+            this.filters.blend.disableFlipY();
+            let count = 0;
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[0]);
+
+            this.gl.activeTexture(this.gl.TEXTURE1);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[1]);
+            _textures.shift();
+            _textures.shift();
+
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.blendFramebuffers[count]);
+
+            this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+            this.gl.activeTexture(this.gl.TEXTURE0);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.blendTextures[count]);
             count++;
+
+            for (let i = 0; i < _textures.length; i++) {
+                this.gl.activeTexture(this.gl.TEXTURE1);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[i]);
+                this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.blendFramebuffers[count % 2]);
+                this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+                this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+                this.gl.activeTexture(this.gl.TEXTURE0);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, this.blendTextures[count % 2]);
+                count++;
+            }
+
+            this.gl.useProgram(this.filters.normal.program);
+            this.filters.normal.enableFlipY();
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+            this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
         }
-        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
 
 
-        
-        for (let i = 0; i < this.blendFramebuffers.length; i++) {
-            this.gl.deleteFramebuffer(this.blendFramebuffers[i]);
-            this.gl.deleteTexture(this.blendTextures[i]);
-        }
 
         for (let i = 0; i < this.midTextures.length; i++) {
             this.gl.deleteFramebuffer(this.midFramebuffers[i]);
             this.gl.deleteTexture(this.midTextures[i]);
         }
-        this.blendFramebuffers = [];
-        this.blendTextures = [];
+        
         this.midFramebuffers = [];
         this.midTextures = [];
 
     }
 
-    renderSingleLayer(layer, framebuffer = null) {
+    renderSingleLayer(layer, texture, framebuffer = null) {
         let x1 = layer.style.x1;
         let x2 = layer.style.x2;
         let x3 = layer.style.x3;
@@ -160,10 +186,16 @@ export default class RenderContext {
             x3, y3, 1.0, 1.0,
             x4, y4, 0.0, 1.0,
             x1, y1, 0.0, 0.0
-        ]
+        ];
+        if (this.gl.CURRENT_PROGRAM !== this.filters.normal.program) {
+            this.gl.useProgram(this.filters.normal.program);
+        }
         points = new Float32Array(points);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
-        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer)
+        this.gl.activeTexture(this.gl.TEXTURE0);
+        this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
+        this.filters.normal.disableFlipY();
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
 
     }

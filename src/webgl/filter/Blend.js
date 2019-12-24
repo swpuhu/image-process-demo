@@ -12,8 +12,14 @@ export default class BlendFilter {
         attribute vec2 a_texCoord;
         varying vec2 v_texCoord;
         uniform mat4 u_projection;
+        uniform int u_enableFlipY;
         void main () {
-            gl_Position = u_projection * a_position;
+            if (u_enableFlipY == 1) {
+                gl_Position = u_projection * a_position * vec4(1.0, -1.0, 1.0, 1.0);
+            } else {
+                gl_Position = u_projection * a_position;
+            }
+            
             v_texCoord = a_texCoord;
         }
         `;
@@ -33,7 +39,6 @@ export default class BlendFilter {
             } else if (u_blend_type == 1.0) {
                 
             }
-            // gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
 
         }
         `;
@@ -54,9 +59,12 @@ export default class BlendFilter {
         gl.vertexAttribPointer(a_texCoord, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, Float32Array.BYTES_PER_ELEMENT * 2);
 
         const u_src_texture = gl.getUniformLocation(program, 'u_src_texture');
-        gl.uniform1i(u_src_texture, 1);
+        gl.uniform1i(u_src_texture, 0);
         const u_dst_texture = gl.getUniformLocation(program, 'u_dst_texture');
-        gl.uniform1i(u_dst_texture, 2);
+        gl.uniform1i(u_dst_texture, 1);
+
+        const u_enableFlipY = gl.getUniformLocation(program, 'u_enableFlipY');
+        gl.uniform1i(u_enableFlipY, 0);
 
 
         const u_blend_type = gl.getUniformLocation(program, 'u_blend_type');
@@ -65,6 +73,7 @@ export default class BlendFilter {
         this.program = program;
         this.u_blend_type = u_blend_type;
         this.u_projection = u_projection;
+        this.u_enableFlipY = u_enableFlipY;
         this.gl = gl;
     }
 
@@ -86,6 +95,14 @@ export default class BlendFilter {
     viewport(projectionMat) {
         this.gl.useProgram(this.program);
         this.gl.uniformMatrix4fv(this.u_projection, false, projectionMat);
+    }
+    
+    enableFlipY() {
+        this.gl.uniform1i(this.u_enableFlipY, 1);
+    }
+
+    disableFlipY() {
+        this.gl.uniform1i(this.u_enableFlipY, 0);
     }
 
 } 
