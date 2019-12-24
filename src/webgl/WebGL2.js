@@ -1,12 +1,7 @@
 import NormalFilter from './filter/Normal';
 import glUtil from './util';
-import util from '../util/util';
 import store from '../store/index';
-import StepType from '../Enum/StepType';
 import BlendFilter from './filter/Blend';
-import {
-    updateStamp
-} from '../store/action';
 
 
 
@@ -43,7 +38,7 @@ export default class RenderContext {
         let filters = {
             normal: new NormalFilter(gl, projectionMat),
             blend: new BlendFilter(gl, projectionMat),
-        }
+        };
 
         this.textures = [];
         this.gl = gl;
@@ -64,22 +59,32 @@ export default class RenderContext {
             layer,
             texture
         });
+    
+        let framebuffer = this.gl.createFramebuffer();
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
+        let _texture = glUtil.createTexture(this.gl);
+        this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.canvas.width, this.canvas.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
+        this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, _texture, 0);
+        this.midFramebuffers.push(framebuffer);
+        this.midTextures.push(_texture);
     }
 
+    deleteLayer(layer) {
+        let index = this.textures.findIndex(item => item.layer === layer);
+        if (index >= 0) {
+            let deletedLayer = this.textures[index];
+            this.gl.deleteTexture(deletedLayer.texture);
+            this.textures.splice(index, 1);
+            let framebuffer = this.midFramebuffers.pop();
+            let texture = this.midTextures.pop();
+            this.gl.deleteFramebuffer(framebuffer);
+            this.gl.deleteTexture(texture);
+        }
+    }
 
     render(resolution) {
         let layers = store.state.layers.slice().reverse();
         this.gl.useProgram(this.filters.normal.program);
-
-        for (let i = 0; i < layers.length; i++) {
-            let framebuffer = this.gl.createFramebuffer();
-            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
-            let texture = glUtil.createTexture(this.gl);
-            this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.canvas.width, this.canvas.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
-            this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, texture, 0);
-            this.midFramebuffers.push(framebuffer);
-            this.midTextures.push(texture);
-        }
         for (let i = 0; i < layers.length; i++) {
             let layer = layers[i];
             let _texture = this.textures.find(item => item.layer === layer);
@@ -111,6 +116,7 @@ export default class RenderContext {
             this.gl.bindTexture(this.gl.TEXTURE_2D, textures[0]);
             this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
             this.filters.normal.enableFlipY();
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
             this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
         } else if (textures.length === 2) {
             this.gl.useProgram(this.filters.blend.program);
@@ -122,6 +128,7 @@ export default class RenderContext {
 
             this.filters.blend.enableFlipY();
             this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
             this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
         } else if (textures.length >= 3) {
             let _textures = textures.slice();
@@ -157,19 +164,9 @@ export default class RenderContext {
             this.gl.useProgram(this.filters.normal.program);
             this.filters.normal.enableFlipY();
             this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+            this.gl.clear(this.gl.COLOR_BUFFER_BIT);
             this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
         }
-
-
-
-        for (let i = 0; i < this.midTextures.length; i++) {
-            this.gl.deleteFramebuffer(this.midFramebuffers[i]);
-            this.gl.deleteTexture(this.midTextures[i]);
-        }
-
-        this.midFramebuffers = [];
-        this.midTextures = [];
-
     }
 
     renderSingleLayer(layer, texture, framebuffer = null, resolution) {
@@ -209,6 +206,7 @@ export default class RenderContext {
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
         this.filters.normal.disableFlipY();
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
 
     }
@@ -217,6 +215,7 @@ export default class RenderContext {
         this.canvas.width = width;
         this.canvas.height = height;
         this.gl.viewport(x, y, width, height);
+        let midNumbers = this.midFramebuffers.length;
 
         let points = new Float32Array([
             0.0, 0.0, 0.0, 0.0,
@@ -231,10 +230,20 @@ export default class RenderContext {
             this.gl.deleteFramebuffer(this.blendFramebuffers[i]);
             this.gl.deleteTexture(this.blendTextures[i]);
         }
-        this.blendFramebuffers.length = [];
-        this.blendTextures.length = [];
-        glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
+        this.blendFramebuffers= [];
+        this.blendTextures = [];
 
+
+
+        for (let i = 0; i < this.midFramebuffers.length; i++) {
+            this.gl.deleteFramebuffer(this.midFramebuffers[i]);
+            this.gl.deleteTexture(this.midTextures[i]);
+        }
+        this.midFramebuffers = [];
+        this.midTextures = [];
+
+        glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
+        glUtil.createFramebufferTexture(this.gl, midNumbers, this.midFramebuffers, this.midTextures, this.canvas.width, this.canvas.height);
         let projectionMat = glUtil.createProjection(width, height, 1);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
         for (let filter in this.filters) {

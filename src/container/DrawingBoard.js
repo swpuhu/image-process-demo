@@ -2,11 +2,7 @@ import Base from '../util/Base';
 import util from '../util/util';
 import Canvas from '../components/Layer';
 import store from '../store/index';
-import StepType from '../Enum/StepType';
 import ToolType from '../Enum/ToolType';
-import {MoveStep} from '../Enum/Step';
-import BlendMode from '../Enum/BlendMode';
-import OffCanvas from '../webgl/OffCanvas';
 import ResizeBox from '../components/ResizeBox';
 import EditMode from '../Enum/EditMode';
 
@@ -31,7 +27,6 @@ class DrawingBoard extends Base {
         let root = util.generateDOM(template).root;
         let that = this;
         let startX, startY;
-        let currentWidth, currentHeight;
 
         function mousedown(e) {
             e.stopPropagation();
@@ -43,13 +38,10 @@ class DrawingBoard extends Base {
         }
 
         function mousemove(e) {
-            let offsetX = e.clientX - startX;
-            let offsetY = e.clientY - startY;
             
             let layers = store.state.currentLayer;
             if (store.state.currentTool === ToolType.MOVE) {
                 for (let layer of layers) {
-                    let lastStep = layer.steps[layer.steps.length - 1];
                     let offsetX = e.movementX * store.state.zoom;
                     let offsetY = e.movementY * store.state.zoom;
                     layer.style.x1 += offsetX;
@@ -103,6 +95,8 @@ class DrawingBoard extends Base {
         if (index > -1) {
             this.layers.splice(index, 1)[0];
         }
+        this.canvas.renderContext.deleteLayer(layer);
+        this.saveCanvas.renderContext.deleteLayer(layer);
     }
 
     changeZoom(zoom) {
@@ -110,11 +104,7 @@ class DrawingBoard extends Base {
         let width = ~~(store.state.width / zoom);
         let height = ~~(store.state.height / zoom);
         this.ref.style.width = width + 'px';
-        this.ref.style.height = height + 'px'
-        this.layers.forEach(layer => {
-            // layer.canvas.ref.style.width = width + 'px';
-            // layer.canvas.ref.style.height = height + 'px';
-        });
+        this.ref.style.height = height + 'px';
         this.canvas.ref.style.width = width + 'px';
         this.canvas.ref.style.height = height + 'px';
     }
