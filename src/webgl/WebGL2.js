@@ -4,7 +4,9 @@ import util from '../util/util';
 import store from '../store/index';
 import StepType from '../Enum/StepType';
 import BlendFilter from './filter/Blend';
-import { updateStamp } from '../store/action';
+import {
+    updateStamp
+} from '../store/action';
 
 
 
@@ -55,7 +57,7 @@ export default class RenderContext {
     }
 
 
-    addLayer(layer) {   
+    addLayer(layer) {
         let texture = glUtil.createTexture(this.gl);
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
         this.textures.push({
@@ -65,10 +67,10 @@ export default class RenderContext {
     }
 
 
-    render() {
+    render(resolution) {
         let layers = store.state.layers.slice().reverse();
         this.gl.useProgram(this.filters.normal.program);
-        
+
         for (let i = 0; i < layers.length; i++) {
             let framebuffer = this.gl.createFramebuffer();
             this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
@@ -83,7 +85,7 @@ export default class RenderContext {
             let _texture = this.textures.find(item => item.layer === layer);
             if (_texture) {
                 this.gl.bindTexture(this.gl.TEXTURE_2D, _texture.texture);
-                this.renderSingleLayer(layer, _texture.texture, this.midFramebuffers[i]);
+                this.renderSingleLayer(layer, _texture.texture, this.midFramebuffers[i], resolution);
             }
         }
         let textures = this.midTextures;
@@ -164,13 +166,13 @@ export default class RenderContext {
             this.gl.deleteFramebuffer(this.midFramebuffers[i]);
             this.gl.deleteTexture(this.midTextures[i]);
         }
-        
+
         this.midFramebuffers = [];
         this.midTextures = [];
 
     }
 
-    renderSingleLayer(layer, texture, framebuffer = null) {
+    renderSingleLayer(layer, texture, framebuffer = null, resolution) {
         let x1 = layer.style.x1;
         let x2 = layer.style.x2;
         let x3 = layer.style.x3;
@@ -179,6 +181,17 @@ export default class RenderContext {
         let y2 = layer.style.y2;
         let y3 = layer.style.y3;
         let y4 = layer.style.y4;
+        if (resolution) {
+            x1 = x1 / store.state.width * resolution.width;
+            x2 = x2 / store.state.width * resolution.width;
+            x3 = x3 / store.state.width * resolution.width;
+            x4 = x4 / store.state.width * resolution.width;
+
+            y1 = y1 / store.state.height * resolution.height;
+            y2 = y2 / store.state.height * resolution.height;
+            y3 = y3 / store.state.height * resolution.height;
+            y4 = y4 / store.state.height * resolution.height;
+        }
         let points = [
             x1, y1, 0.0, 0.0,
             x2, y2, 1.0, 0.0,
@@ -197,6 +210,36 @@ export default class RenderContext {
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
         this.filters.normal.disableFlipY();
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+
+    }
+
+    viewport(x, y, width, height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+        this.gl.viewport(x, y, width, height);
+
+        let points = new Float32Array([
+            0.0, 0.0, 0.0, 0.0,
+            width, 0.0, 1.0, 0.0,
+            width, height, 1.0, 1.0,
+            width, height, 1.0, 1.0,
+            0.0, height, 0.0, 1.0,
+            0.0, 0.0, 0.0, 0.0
+        ]);
+
+        for (let i = 0; i < this.blendFramebuffers.length; i++) {
+            this.gl.deleteFramebuffer(this.blendFramebuffers[i]);
+            this.gl.deleteTexture(this.blendTextures[i]);
+        }
+        this.blendFramebuffers.length = [];
+        this.blendTextures.length = [];
+        glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
+
+        let projectionMat = glUtil.createProjection(width, height, 1);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
+        for (let filter in this.filters) {
+            this.filters[filter].viewport(projectionMat);
+        }
 
     }
 }

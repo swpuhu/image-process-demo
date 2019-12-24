@@ -16,8 +16,8 @@ export default class Layer extends Base {
         this.renderContext = new RenderContext(this.ref);
     }
 
-    render(layer, renderResolution) {
-        this.renderContext.render(layer, renderResolution);
+    render(renderResolution) {
+        this.renderContext.render(renderResolution);
     }
 
     offRender(layer, renderResolution) {

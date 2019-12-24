@@ -90,31 +90,18 @@ class DrawingBoard extends Base {
     }
 
     addCanvas(layer) {
-        let canvas;
-        let offCanvas;
-        if (store.state.width && store.state.height) {
-            // canvas = new Canvas(store.state.width, store.state.height);
-            // offCanvas = new Canvas(store.state.width, store.state.height);
-        } else {
-            // canvas = new Canvas(layer.width, layer.height);
-            // offCanvas = new Canvas(layer.width, layer.height);
-        }
         this.canvas.renderContext.addLayer(layer);
+        this.saveCanvas.renderContext.addLayer(layer);
         this.layers.unshift({
             layer: layer,
-            // canvas: canvas,
-            // offCanvas: offCanvas
         });
-        // this.draw();
         this.draw();
     }
 
     deleteCanvas(layer) {
         let index = this.layers.findIndex(item => item.layer === layer);
         if (index > -1) {
-            let deletedCanvas = this.layers.splice(index, 1)[0];
-            deletedCanvas.canvas.remove();
-            deletedCanvas.canvas = null;
+            this.layers.splice(index, 1)[0];
         }
     }
 
@@ -133,7 +120,7 @@ class DrawingBoard extends Base {
     }
 
     draw() {
-        this.canvas.render(this.layers);
+        this.canvas.render();
     }
 
 
@@ -160,12 +147,8 @@ class DrawingBoard extends Base {
         this.draw();
     }
     async savePicture(width = store.state.originWidth, height = store.state.originHeight) {
-        this.layers.forEach(item => {
-            item.offCanvas.viewport(0, 0, width, height);
-        })
         this.saveCanvas.viewport(0, 0, width, height);
-        this.saveCanvas.offRender(this.layers, {width, height});
-        this.saveCanvas.offRender(this.layers, {width, height});
+        this.saveCanvas.render({width, height});
         let src = this.saveCanvas.ref.toDataURL();
         util.downloadBase64(src, 'test.png');
         this.draw();
