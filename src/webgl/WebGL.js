@@ -82,8 +82,6 @@ export default class RenderContext {
         } else if (!renderResolution) {
             return;
         }
-        let Width = store.state.width;
-        let Height = store.state.height;
         let x1 = layer.style.x1;
         let x2 = layer.style.x2;
         let x3 = layer.style.x3;
@@ -92,8 +90,6 @@ export default class RenderContext {
         let y2 = layer.style.y2;
         let y3 = layer.style.y3;
         let y4 = layer.style.y4;
-        let prevWidth = this.width;
-        let prevHeight = this.height;
         if (renderResolution) {
             x1 = x1 / store.state.width * renderResolution.width;
             x2 = x2 / store.state.width * renderResolution.width;

@@ -49,6 +49,7 @@ export default class RenderContext {
         this.midTextures = [];
         this.canvas = canvas;
         glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
+        this.layers = new Map();
     }
 
 
@@ -67,12 +68,14 @@ export default class RenderContext {
         this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, _texture, 0);
         this.midFramebuffers.push(framebuffer);
         this.midTextures.push(_texture);
+        this.layers.set(layer, JSON.stringify(layer));
     }
 
     deleteLayer(layer) {
         let index = this.textures.findIndex(item => item.layer === layer);
         if (index >= 0) {
             let deletedLayer = this.textures[index];
+            this.layers.delete(deletedLayer);
             this.gl.deleteTexture(deletedLayer.texture);
             this.textures.splice(index, 1);
             let framebuffer = this.midFramebuffers.pop();
