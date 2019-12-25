@@ -734,6 +734,24 @@ function scale(center, x, y, scaleX, scaleY) {
 function getDistance(x1, y1, x2, y2) {
     return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 }
+
+
+function analyzeHistogram(width, height, data) {
+    let r = new Array(256);
+    let g = new Array(256);
+    let b = new Array(256);
+    r.fill(0);
+    g.fill(0);
+    b.fill(0);
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x += 4) {
+            ++r[data[y * width * 4 + x]];
+            ++g[data[y * width * 4 + x + 1]];
+            ++b[data[y * width * 4 + x + 2]];
+        }
+    }
+    return [r, b, g];
+}
 export default {
     initWebGL,
     createProjection,
@@ -761,5 +779,6 @@ export default {
     vecMultipleMat,
     getPointAndLineDistance,
     scale,
-    getDistance
+    getDistance,
+    analyzeHistogram
 }
