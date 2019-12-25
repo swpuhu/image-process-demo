@@ -58,8 +58,9 @@ export default class RenderContext {
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
         this.textures.push({
             layer,
-            texture
+            texture,
         });
+        layer.firstRender = true;
     
         let framebuffer = this.gl.createFramebuffer();
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
@@ -78,10 +79,12 @@ export default class RenderContext {
             this.layers.delete(deletedLayer);
             this.gl.deleteTexture(deletedLayer.texture);
             this.textures.splice(index, 1);
-            let framebuffer = this.midFramebuffers.pop();
-            let texture = this.midTextures.pop();
-            this.gl.deleteFramebuffer(framebuffer);
-            this.gl.deleteTexture(texture);
+            let deletedFramebuffer = this.midFramebuffers[index];
+            let deletedTexture = this.midTextures[index];
+            this.midFramebuffers.splice(index, 1);
+            this.midTextures.splice(index, 1);
+            this.gl.deleteFramebuffer(deletedFramebuffer);
+            this.gl.deleteTexture(deletedTexture);
         }
     }
 
@@ -173,6 +176,14 @@ export default class RenderContext {
     }
 
     renderSingleLayer(layer, texture, framebuffer = null, resolution) {
+        let params = this.layers.get(layer);
+        if (params === JSON.stringify(layer) && !layer.firstRender) {
+            return;
+        } else {
+            layer.firstRender = false;
+            this.layers.set(layer, JSON.stringify(layer));
+        }
+
         let x1 = layer.style.x1;
         let x2 = layer.style.x2;
         let x3 = layer.style.x3;
