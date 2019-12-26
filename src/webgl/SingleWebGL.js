@@ -5,12 +5,15 @@ import BlendFilter from './filter/Blend';
 
 
 
-export default class RenderContext {
+export default class SingleWebGL {
     /**
      * 
      * @param {HTMLCanvasElement} canvas 
      */
-    constructor(canvas) {
+    constructor(width, height) {
+        let canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
         let gl = canvas.getContext('webgl2', {
             premultipliedAlpha: false
         });
@@ -18,8 +21,6 @@ export default class RenderContext {
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        let width = canvas.width;
-        let height = canvas.height;
         let points = new Float32Array([
             0.0, 0.0, 0.0, 0.0,
             width, 0.0, 1.0, 0.0,
@@ -44,21 +45,40 @@ export default class RenderContext {
         this.filters = filters;
         this.canvas = canvas;
         this.texture = texture;
+        this.cacheImage;
     }
 
     render(layer) {
-        let layers = store.state.layers.slice().reverse();
-        this.gl.useProgram(this.filters.normal.program);
-        for (let i = 0; i < layers.length; i++) {
-            let layer = layers[i];
-            let _texture = this.textures.find(item => item.layer === layer);
-            if (_texture) {
-                this.gl.bindTexture(this.gl.TEXTURE_2D, _texture.texture);
-                this.renderSingleLayer(layer, _texture.texture, this.midFramebuffers[i], resolution);
-            }
+        this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+        if (this.cacheImage !== layer.image) {
+            this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
+            this.cacheImage = layer.image;
         }
-        let textures = this.midTextures;
-        this.blendLayers(textures);
+        let x1 = layer.style.x1 / store.state.width * this.canvas.width;
+        let x2 = layer.style.x2 / store.state.width * this.canvas.width;
+        let x3 = layer.style.x3 / store.state.width * this.canvas.width;
+        let x4 = layer.style.x4 / store.state.width * this.canvas.width;
+
+        let y1 = layer.style.y1 / store.state.height * this.canvas.height;
+        let y2 = layer.style.y2 / store.state.height * this.canvas.height;
+        let y3 = layer.style.y3 / store.state.height * this.canvas.height;
+        let y4 = layer.style.y4 / store.state.height * this.canvas.height;
+        
+        let points = [
+            x1, y1, 0.0, 0.0,
+            x2, y2, 1.0, 0.0,
+            x3, y3, 1.0, 1.0,
+            x3, y3, 1.0, 1.0,
+            x4, y4, 0.0, 1.0,
+            x1, y1, 0.0, 0.0
+        ];
+        points = new Float32Array(points);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
+        this.gl.useProgram(this.filters.normal.program);
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        this.filters.normal.disableFlipY();
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
     }
 
 

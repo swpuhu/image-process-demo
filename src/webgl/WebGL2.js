@@ -2,7 +2,9 @@ import NormalFilter from './filter/Normal';
 import glUtil from './util';
 import store from '../store/index';
 import BlendFilter from './filter/Blend';
-
+import {updateStamp} from '../store/action'
+import SingleWebGL from './SingleWebGL';
+import util from '../util/util';
 
 
 export default class RenderContext {
@@ -14,6 +16,7 @@ export default class RenderContext {
         let gl = canvas.getContext('webgl2', {
             premultipliedAlpha: false
         });
+        let offCanvas = new SingleWebGL(80, 50);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.clearColor(0.0, 0.0, 0.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -50,6 +53,8 @@ export default class RenderContext {
         this.canvas = canvas;
         glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
         this.layers = new Map();
+        this.offCanvas = offCanvas;
+        this.updateStamp = util.debounce(this.updateStamp, 200);
     }
 
 
@@ -222,7 +227,13 @@ export default class RenderContext {
         this.filters.normal.disableFlipY();
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+        this.updateStamp(layer);
 
+    }
+
+    updateStamp(layer) {
+        this.offCanvas.render(layer);
+        store.dispatch(updateStamp(layer, this.offCanvas.canvas));
     }
 
     viewport(x, y, width, height) {
