@@ -61,12 +61,8 @@ export default class RenderContext {
     addLayer(layer) {
         let texture = glUtil.createTexture(this.gl);
         this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, layer.image);
-        this.textures.push({
-            layer,
-            texture,
-        });
         layer.firstRender = true;
-    
+
         let framebuffer = this.gl.createFramebuffer();
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, framebuffer);
         let _texture = glUtil.createTexture(this.gl);
@@ -75,6 +71,12 @@ export default class RenderContext {
         this.midFramebuffers.push(framebuffer);
         this.midTextures.push(_texture);
         this.layers.set(layer, JSON.stringify(layer));
+        this.textures.push({
+            layer,
+            texture,
+            midFramebuffer: framebuffer,
+            midTexture: _texture
+        });
     }
 
     deleteLayer(layer) {
@@ -96,15 +98,17 @@ export default class RenderContext {
     render(resolution) {
         let layers = store.state.layers.slice().reverse();
         this.gl.useProgram(this.filters.normal.program);
+        let textures = [];
         for (let i = 0; i < layers.length; i++) {
             let layer = layers[i];
             let _texture = this.textures.find(item => item.layer === layer);
             if (_texture) {
                 this.gl.bindTexture(this.gl.TEXTURE_2D, _texture.texture);
-                this.renderSingleLayer(layer, _texture.texture, this.midFramebuffers[i], resolution);
+                this.renderSingleLayer(layer, _texture.texture, _texture.midFramebuffer, resolution);
             }
+            textures.push(_texture.midTexture);
         }
-        let textures = this.midTextures;
+        // let textures = this.midTextures;
         this.blendLayers(textures);
     }
 
@@ -258,17 +262,27 @@ export default class RenderContext {
         this.blendFramebuffers= [];
         this.blendTextures = [];
 
-
-
         for (let i = 0; i < this.midFramebuffers.length; i++) {
-            this.gl.deleteFramebuffer(this.midFramebuffers[i]);
-            this.gl.deleteTexture(this.midTextures[i]);
+            this.gl.bindFramebuffer(this.gl.FRAMEBUFFER ,this.midFramebuffers[i]);
+            this.gl.viewport(x, y, width, height);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, this.midTextures[i]);
+            this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.canvas.width, this.canvas.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null);
         }
-        this.midFramebuffers = [];
-        this.midTextures = [];
+
+        for (let i = 0; i < this.textures.length; i++) {
+            this.textures[i].layer.firstRender = true;
+        }
+
+
+        // for (let i = 0; i < this.midFramebuffers.length; i++) {
+        //     this.gl.deleteFramebuffer(this.midFramebuffers[i]);
+        //     this.gl.deleteTexture(this.midTextures[i]);
+        // }
+        // this.midFramebuffers = [];
+        // this.midTextures = [];
 
         glUtil.createFramebufferTexture(this.gl, 2, this.blendFramebuffers, this.blendTextures, this.canvas.width, this.canvas.height);
-        glUtil.createFramebufferTexture(this.gl, midNumbers, this.midFramebuffers, this.midTextures, this.canvas.width, this.canvas.height);
+        // glUtil.createFramebufferTexture(this.gl, midNumbers, this.midFramebuffers, this.midTextures, this.canvas.width, this.canvas.height);
         let projectionMat = glUtil.createProjection(width, height, 1);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, points, this.gl.STATIC_DRAW);
         for (let filter in this.filters) {
