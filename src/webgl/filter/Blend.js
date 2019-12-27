@@ -121,23 +121,29 @@ export default class BlendFilter {
             
         } else if (type === BlendMode.MULTIPLY) {
             // 正片叠底
+            this.gl.clearColor(1.0, 1.0, 1.0, 0.0);
             type = 1;
         } else if (type === BlendMode.LIGHTEN) {
             // 变亮
+            this.gl.clearColor(0.0, 0.0, 0.0, 0.0);
             type = 2;
         } else if (type === BlendMode.DARKEN) {
             // 变暗
+            this.gl.clearColor(1.0, 1.0, 1.0, 0.0);
             type = 3;
         } else if (type === BlendMode.COLOR_FILTER) {
             // 滤色
+            this.gl.clearColor(0.0, 0.0, 0.0, 0.0);
             type = 4;
         } else if (type === BlendMode.COLOR_BURN) {
             // 颜色加深
+            this.gl.clearColor(1.0, 1.0, 1.0, 0.0);
             type = 5;
         } else if (type === BlendMode.COLOR_DODGE) {
             type = 6;
         } else if (type === BlendMode.OVERLAY) {
              // 叠加
+             this.gl.clearColor(1.0, 1.0, 1.0, 0.0);
             type = 7;
         }
         this.gl.uniform1f(this.u_blend_type, type);
