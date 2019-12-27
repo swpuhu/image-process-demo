@@ -26,18 +26,22 @@ export default class BlendFilter {
 
         const fragmentShader = `
         precision mediump float;
-        uniform sampler2D u_src_texture;
-        uniform sampler2D u_dst_texture;
+        uniform sampler2D u_back_texture;
+        uniform sampler2D u_front_texture;
         uniform float u_blend_type;
         varying vec2 v_texCoord;
         void main () {
-            vec4 src_color = texture2D(u_src_texture, v_texCoord);
-            vec4 dst_color = texture2D(u_dst_texture, v_texCoord);
+            vec4 back_color = texture2D(u_back_texture, v_texCoord);
+            vec4 front_color = texture2D(u_front_texture, v_texCoord);
             if (u_blend_type == 0.0) {
                 // 正常混合模式
-                gl_FragColor = vec4(dst_color.rgb * dst_color.a + src_color.rgb * (1.0 - dst_color.a), src_color.a + dst_color.a);
+                float alpha = 1.0 - (1.0 - back_color.a) * (1.0 - front_color.a);
+                gl_FragColor = vec4(front_color.rgb * front_color.a + back_color.rgb * (1.0 - front_color.a), alpha);
             } else if (u_blend_type == 1.0) {
-                
+                // 正片叠底
+                front_color = vec4(front_color.rgb * back_color.rgb, front_color.a);
+                float alpha = 1.0 - (1.0 - back_color.a) * (1.0 - front_color.a);
+                gl_FragColor = vec4(front_color.rgb * front_color.a + back_color.rgb * (1.0 - front_color.a), alpha);
             }
 
         }
@@ -58,10 +62,10 @@ export default class BlendFilter {
         gl.enableVertexAttribArray(a_texCoord);
         gl.vertexAttribPointer(a_texCoord, 2, gl.FLOAT, false, Float32Array.BYTES_PER_ELEMENT * 4, Float32Array.BYTES_PER_ELEMENT * 2);
 
-        const u_src_texture = gl.getUniformLocation(program, 'u_src_texture');
-        gl.uniform1i(u_src_texture, 0);
-        const u_dst_texture = gl.getUniformLocation(program, 'u_dst_texture');
-        gl.uniform1i(u_dst_texture, 1);
+        const u_back_texture = gl.getUniformLocation(program, 'u_back_texture');
+        gl.uniform1i(u_back_texture, 0);
+        const u_front_texture = gl.getUniformLocation(program, 'u_front_texture');
+        gl.uniform1i(u_front_texture, 1);
 
         const u_enableFlipY = gl.getUniformLocation(program, 'u_enableFlipY');
         gl.uniform1i(u_enableFlipY, 0);
@@ -81,8 +85,11 @@ export default class BlendFilter {
     setBlendType(type) {
         if (type === BlendMode.NORMAL) {
             type = 0;
-            this.gl.uniform1f(this.u_blend_type, type);
+            
+        } else if (type === BlendMode.MULTIPLY) {
+            type = 1;
         }
+        this.gl.uniform1f(this.u_blend_type, type);
     }
 
 

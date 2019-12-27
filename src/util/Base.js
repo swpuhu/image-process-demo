@@ -1,6 +1,9 @@
 export default class Base {
     constructor () {
         this.eventList = [];
+        this.on = this.on.bind(this);
+        this.off = this.off.bind(this);
+        this.dispatch = this.dispatch.bind(this);
     }
 
     on(name, fn) {

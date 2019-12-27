@@ -5,6 +5,7 @@ import BlendFilter from './filter/Blend';
 import {updateStamp} from '../store/action'
 import SingleWebGL from './SingleWebGL';
 import util from '../util/util';
+import BlendMode from '../Enum/BlendMode';
 
 
 export default class RenderContext {
@@ -18,7 +19,7 @@ export default class RenderContext {
         });
         let offCanvas = new SingleWebGL(80, 50);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        gl.clearColor(0.0, 0.0, 0.0, 0.0);
+        gl.clearColor(1.0, 1.0, 1.0, 0.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         let width = canvas.width;
@@ -106,7 +107,10 @@ export default class RenderContext {
                 this.gl.bindTexture(this.gl.TEXTURE_2D, _texture.texture);
                 this.renderSingleLayer(layer, _texture.texture, _texture.midFramebuffer, resolution);
             }
-            textures.push(_texture.midTexture);
+            textures.push({
+                texture: _texture.midTexture,
+                blendMode: layer.blendMode
+            });
         }
         // let textures = this.midTextures;
         this.blendLayers(textures);
@@ -128,7 +132,7 @@ export default class RenderContext {
         if (textures.length === 1) {
             this.gl.useProgram(this.filters.normal.program);
             this.gl.activeTexture(this.gl.TEXTURE0);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[0]);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[0].texture);
             this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
             this.filters.normal.enableFlipY();
             this.gl.clear(this.gl.COLOR_BUFFER_BIT);
@@ -136,12 +140,13 @@ export default class RenderContext {
         } else if (textures.length === 2) {
             this.gl.useProgram(this.filters.blend.program);
             this.gl.activeTexture(this.gl.TEXTURE0);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[0]);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[0].texture);
 
             this.gl.activeTexture(this.gl.TEXTURE1);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[1]);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, textures[1].texture);
 
             this.filters.blend.enableFlipY();
+            this.filters.blend.setBlendType(textures[1].blendMode);
             this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
             this.gl.clear(this.gl.COLOR_BUFFER_BIT);
             this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
@@ -151,25 +156,27 @@ export default class RenderContext {
             this.filters.blend.disableFlipY();
             let count = 0;
             this.gl.activeTexture(this.gl.TEXTURE0);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[0]);
+            this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[0].texture);
 
             this.gl.activeTexture(this.gl.TEXTURE1);
-            this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[1]);
-            _textures.shift();
-            _textures.shift();
+            this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[1].texture);
 
             this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.blendFramebuffers[count]);
 
+            this.filters.blend.setBlendType(_textures[1].blendMode);
             this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
             this.gl.activeTexture(this.gl.TEXTURE0);
             this.gl.bindTexture(this.gl.TEXTURE_2D, this.blendTextures[count]);
             count++;
+            _textures.shift();
+            _textures.shift();
 
             for (let i = 0; i < _textures.length; i++) {
                 this.gl.activeTexture(this.gl.TEXTURE1);
-                this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[i]);
+                this.gl.bindTexture(this.gl.TEXTURE_2D, _textures[i].texture);
                 this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.blendFramebuffers[count % 2]);
                 this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+                this.filters.blend.setBlendType(_textures[i].blendMode);
                 this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
                 this.gl.activeTexture(this.gl.TEXTURE0);
                 this.gl.bindTexture(this.gl.TEXTURE_2D, this.blendTextures[count % 2]);

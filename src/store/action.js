@@ -16,7 +16,8 @@ export const ActionType = {
     COPY_LAYER: 13,
     PASTE_LAYER: 14,
     UPDATE_STAMP: 15,
-    NEW_PROJECT: 16
+    NEW_PROJECT: 16,
+    UPDATE_BLENDMODE: 17
 }
 export function newProject({width, height, name}) {
     return {
@@ -153,5 +154,13 @@ export function updateStamp(layer, canvas) {
             layer: layer,
             canvas: canvas
         }
+    }
+}
+
+
+export function updateBlendMode(mode) {
+    return {
+        type: ActionType.UPDATE_BLENDMODE,
+        payload: mode
     }
 }

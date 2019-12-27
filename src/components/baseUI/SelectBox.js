@@ -38,8 +38,8 @@ export default class SelectBox extends Base {
         this.show = this.show.bind(this);
         this.hide = this.hide.bind(this);
         this.dropListItem = []
+        this.disabled = false;
         this.ref = this.render();
-        console.log(this.eventList);
     }
 
     render() {
@@ -90,6 +90,7 @@ export default class SelectBox extends Base {
 
         display.onclick = function (e) {
             e.stopPropagation();
+            if (that.disabled) return;
             if (that.isShow) {
                 that.hide();
             } else {
@@ -113,5 +114,15 @@ export default class SelectBox extends Base {
     show() {
         this.dropList.classList.remove('hide');
         this.isShow = true;
+    }
+
+    setDisable() {
+        this.disabled = true;
+        this.ref.classList.add('disabled');
+    }
+
+    cancelDisable() {
+        this.disabled = false;
+        this.ref.classList.remove('disabled');
     }
 }

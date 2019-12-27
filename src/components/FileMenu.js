@@ -8,6 +8,7 @@ import {
     newProject
 } from '../store/action';
 import util from '../util/util';
+import BlendMode from '../Enum/BlendMode';
 
 class Item {
     constructor(text, onclick) {
@@ -73,7 +74,8 @@ class FileMenu extends Base {
                             name: util.deletePostfix(file.name),
                             steps: [
                             ],
-                            style: style
+                            style: style,
+                            blendMode: BlendMode.NORMAL
                         };
                         store.dispatch(openFile(layer));
                         if (isFirst) {

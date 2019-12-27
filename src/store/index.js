@@ -5,9 +5,12 @@ function createStore (state, reducer) {
     function dispatch(action) {
         reducer(state, action);
     }
+
     return {
         state,
-        dispatch
+        dispatch,
+        on: state.on,
+        off: state.off,
     };
 }
 
