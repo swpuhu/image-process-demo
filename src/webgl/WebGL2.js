@@ -244,7 +244,6 @@ export default class RenderContext {
         this.canvas.width = width;
         this.canvas.height = height;
         this.gl.viewport(x, y, width, height);
-        let midNumbers = this.midFramebuffers.length;
 
         let points = new Float32Array([
             0.0, 0.0, 0.0, 0.0,

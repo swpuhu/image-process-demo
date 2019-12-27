@@ -7,6 +7,7 @@ class DropListItem extends Base{
         this.value = value;
         this.onclick = onclick;
         this.ref = this.render();
+        this.disabled = false;
     }
 
     render() {
@@ -14,7 +15,7 @@ class DropListItem extends Base{
             tagName: 'div',
             classList: ['droplist-item'],
             text: this.alias,
-        }
+        };
 
         let {
             root
@@ -47,13 +48,13 @@ export default class SelectBox extends Base {
             classList: ['select-droplist', 'hide'],
             ref: 'dropList',
             children: [],
-        }
+        };
 
         for (let item of this.dropList) {
             let dropListItem = new DropListItem(item.alias, item.value, this.hide)
             dropListTemplate.children.push({
                 component: dropListItem
-            })
+            });
             this.dropListItem.push(dropListItem);
 
         }
@@ -68,7 +69,7 @@ export default class SelectBox extends Base {
                 },
                 dropListTemplate
             ]
-        }
+        };
 
 
         let {
@@ -84,17 +85,22 @@ export default class SelectBox extends Base {
                 display.textContent = name;
                 that.dispatch('change', name, value)
             })
-        })
+        });
 
 
-        display.onclick = function () {
+        display.onclick = function (e) {
+            e.stopPropagation();
             if (that.isShow) {
                 that.hide();
             } else {
                 that.show();
             }
 
-        }
+        };
+
+        document.addEventListener('mouseup', function () {
+            that.hide();
+        });
         this.dropList = dropList;
         return root;
     }
