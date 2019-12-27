@@ -19,11 +19,12 @@ class BlendLayerSelectBox {
         this.box.setDisable();
         this.ref = this.box.ref;
         
-        store.on('changeLayer', () => {
+        store.on('changeLayer', (_layer) => {
             let layer = store.state.currentLayer[0];
             let index = store.state.layers.indexOf(layer);
             if (store.state.layers.length >= 2 && index > -1 && index !== store.state.layers.length - 1) {
-                this.box.cancelDisable();       
+                this.box.cancelDisable();
+                this.box.value = _layer.blendMode;       
             } else {
                 this.box.setDisable();
             }

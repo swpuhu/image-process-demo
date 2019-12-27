@@ -4,7 +4,7 @@ import util from '../util/util';
 import LayerContextMenu from './LayerContextMenu';
 import LayerProps from './LayerProps';
 import Item from './LayerItem';
-
+import {changeLayer} from '../store/action';
 class LayerInfo extends Base {
     constructor() {
         super();
@@ -58,8 +58,8 @@ class LayerInfo extends Base {
 
     addLayer(layer) {
         let item = new Item(layer, this.clearAllActive, this.changeLayer);
-        this.clearAllActive();
-        item.active();
+        // this.clearAllActive();
+        // item.active();
         let firstChild = this.layerInfoItems[0];
         if (firstChild) {
             this.layerInfo.insertBefore(item.ref, firstChild.ref);
@@ -67,7 +67,7 @@ class LayerInfo extends Base {
             this.layerInfo.appendChild(item.ref);
         }
         this.layerInfoItems.unshift(item);
-        
+        store.dispatch(changeLayer(layer));
     }
 
     deleteLayer(layer) {

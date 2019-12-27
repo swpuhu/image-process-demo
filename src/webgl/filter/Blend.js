@@ -35,14 +35,47 @@ export default class BlendFilter {
             vec4 front_color = texture2D(u_front_texture, v_texCoord);
             if (u_blend_type == 0.0) {
                 // 正常混合模式
-                float alpha = 1.0 - (1.0 - back_color.a) * (1.0 - front_color.a);
-                gl_FragColor = vec4(front_color.rgb * front_color.a + back_color.rgb * (1.0 - front_color.a), alpha);
             } else if (u_blend_type == 1.0) {
                 // 正片叠底
                 front_color = vec4(front_color.rgb * back_color.rgb, front_color.a);
-                float alpha = 1.0 - (1.0 - back_color.a) * (1.0 - front_color.a);
-                gl_FragColor = vec4(front_color.rgb * front_color.a + back_color.rgb * (1.0 - front_color.a), alpha);
+            } else if (u_blend_type == 2.0) {
+                // 变亮
+                front_color = vec4(max(front_color.rgb, back_color.rgb), front_color.a);
+            } else if (u_blend_type == 3.0) {
+                // 变暗
+                front_color = vec4(min(front_color.rgb, back_color.rgb), front_color.a);
+            } else if (u_blend_type == 4.0) {
+                // 滤色
+                front_color = vec4(1.0 - (1.0 - front_color.rgb) * (1.0 - back_color.rgb), front_color.a);
+            } else if (u_blend_type == 5.0) {
+                // 颜色加深
+                front_color = vec4(front_color.rgb - (1.0 - front_color.rgb) * (1.0 - back_color.rgb) / back_color.rgb, front_color.a);
+            } else if (u_blend_type == 6.0) {
+                // 颜色减淡
+                front_color = vec4(front_color.rgb + (front_color.rgb) * (back_color.rgb) / (1.0 - back_color.rgb), front_color.a);
+            } else if (u_blend_type == 7.0) {
+                if (front_color.r <= 0.5) {
+                    front_color.r = front_color.r * back_color.r * 2.0;
+                } else {
+                    front_color.r = 1.0 - (1.0 - front_color.r) * (1.0 - back_color.r) * 2.0;
+                }
+
+                
+                if (front_color.g <= 0.5) {
+                    front_color.g = front_color.g * back_color.g * 2.0;
+                } else {
+                    front_color.g = 1.0 - (1.0 - front_color.g) * (1.0 - back_color.g) * 2.0;
+                }
+
+                
+                if (front_color.b <= 0.5) {
+                    front_color.b = front_color.b * back_color.b * 2.0;
+                } else {
+                    front_color.b = 1.0 - (1.0 - front_color.b) * (1.0 - back_color.b) * 2.0;
+                }
+
             }
+            gl_FragColor = vec4(front_color.rgb * front_color.a + back_color.rgb * (1.0 - front_color.a), 1.0 - (1.0 - back_color.a) * (1.0 - front_color.a));
 
         }
         `;
@@ -87,7 +120,25 @@ export default class BlendFilter {
             type = 0;
             
         } else if (type === BlendMode.MULTIPLY) {
+            // 正片叠底
             type = 1;
+        } else if (type === BlendMode.LIGHTEN) {
+            // 变亮
+            type = 2;
+        } else if (type === BlendMode.DARKEN) {
+            // 变暗
+            type = 3;
+        } else if (type === BlendMode.COLOR_FILTER) {
+            // 滤色
+            type = 4;
+        } else if (type === BlendMode.COLOR_BURN) {
+            // 颜色加深
+            type = 5;
+        } else if (type === BlendMode.COLOR_DODGE) {
+            type = 6;
+        } else if (type === BlendMode.OVERLAY) {
+             // 叠加
+            type = 7;
         }
         this.gl.uniform1f(this.u_blend_type, type);
     }
