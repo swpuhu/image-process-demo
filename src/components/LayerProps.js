@@ -1,13 +1,14 @@
 import Base from '../util/Base';
 import util from '../util/util';
 import SelectBox from './baseUI/SelectBox';
+import RangeEditor from './baseUI/RangeEditor';
 import BlendMode from '../Enum/BlendMode';
 import BlendModeDict from '../Enum/BlendModeDict';
 import store from '../store/index';
-import {updateBlendMode, drawLayer} from '../store/action'
+import { updateBlendMode, drawLayer } from '../store/action'
 
 class BlendLayerSelectBox {
-    constructor () {
+    constructor() {
         this.dropList = [];
         for (let mode in BlendMode) {
             this.dropList.push({
@@ -18,13 +19,13 @@ class BlendLayerSelectBox {
         this.box = new SelectBox(this.dropList);
         this.box.setDisable();
         this.ref = this.box.ref;
-        
+
         store.on('changeLayer', (_layer) => {
             let layer = store.state.currentLayer[0];
             let index = store.state.layers.indexOf(layer);
             if (store.state.layers.length >= 2 && index > -1 && index !== store.state.layers.length - 1) {
                 this.box.cancelDisable();
-                this.box.value = _layer.blendMode;       
+                this.box.value = _layer.blendMode;
             } else {
                 this.box.setDisable();
             }
@@ -34,7 +35,7 @@ class BlendLayerSelectBox {
             let layer = store.state.currentLayer[0];
             let index = store.state.layers.indexOf(layer);
             if (store.state.layers.length >= 2 && index > -1 && index !== store.state.layers.length - 1) {
-                this.box.cancelDisable();       
+                this.box.cancelDisable();
             } else {
                 this.box.setDisable();
             }
@@ -48,28 +49,49 @@ class BlendLayerSelectBox {
 }
 
 export default class LayerProps extends Base {
-    constructor () {
+    constructor() {
         super();
         this.blendLayerBox = new BlendLayerSelectBox();
+        this.rangeEditor = new RangeEditor(0, 100, 1, 1);
         this.ref = this.render();
     }
 
     render() {
         let tempate = {
             tagName: 'div',
-            classList: ['layerblend', 'flex'],
+            classList: '',
             children: [
                 {
                     tagName: 'div',
-                    classList: ['layerblend-label'],
-                    text: '混合模式'
+                    classList: ['layerblend', 'flex'],
+                    children: [
+                        {
+                            tagName: 'div',
+                            classList: ['layerblend-label'],
+                            text: '混合模式'
+                        },
+                        {
+                            component: this.blendLayerBox
+                        },
+                    ]
                 },
                 {
-                    component: this.blendLayerBox
+                    tagName: 'div',
+                    classList: ['alpha', 'flex'],
+                    children: [
+                        {
+                            tagName: 'div',
+                            classList: ['alpha-label'],
+                            text: '透明度'
+                        },
+                        {
+                            component: this.rangeEditor
+                        }
+                    ]
                 }
             ]
         }
-        let {root} = util.generateDOM(tempate);
+        let { root } = util.generateDOM(tempate);
         return root;
     }
 }
