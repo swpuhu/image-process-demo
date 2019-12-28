@@ -42,6 +42,7 @@ export default function (state, action) {
             state.currentLayer = [action.payload];
             drawingBoard.addCanvas(action.payload);
             layerInfo.addLayer(action.payload);
+            state.dispatch('addLayer', action.payload);
             break;
         case ActionType.COPY_LAYER:
             state.clipboard.type = ClipboardType.Layer
@@ -64,6 +65,7 @@ export default function (state, action) {
         case ActionType.CHANGE_LAYER:
             state.currentLayer = [action.payload];
             layerInfo.changeLayer(action.payload);
+            state.dispatch('changeLayer', action.payload);
             break;
         case ActionType.DELETE_LAYER:
             let index = state.layers.indexOf(action.payload);
@@ -120,7 +122,9 @@ export default function (state, action) {
         case ActionType.UPDATE_STAMP:
             layerInfo.updateStamp(action.payload)
             break;
-
+        
+        case ActionType.UPDATE_BLENDMODE:
+            state.currentLayer[0].blendMode = action.payload;
         default:
 
     }

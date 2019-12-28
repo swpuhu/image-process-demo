@@ -33,16 +33,26 @@ class DropListItem extends Base{
 export default class SelectBox extends Base {
     constructor(dropList) {
         super();
-        this.dropList = dropList;
+        this.list = dropList;
         this.isShow = false;
         this.show = this.show.bind(this);
         this.hide = this.hide.bind(this);
         this.dropListItem = []
+        this.disabled = false;
         this.ref = this.render();
-        console.log(this.eventList);
+        this.value = dropList[0].value;
+    }
+
+    set value(newValue) {
+        for (let item of this.list) {
+            if (item.value === newValue) {
+                this.display.textContent = item.alias;
+            }
+        }
     }
 
     render() {
+        let first = true;
         let dropListTemplate = {
             tagName: 'div',
             classList: ['select-droplist', 'hide'],
@@ -50,7 +60,11 @@ export default class SelectBox extends Base {
             children: [],
         };
 
-        for (let item of this.dropList) {
+        for (let item of this.list) {
+            // if (first) {
+            //     this.value = item.value;
+            //     first = false;
+            // }
             let dropListItem = new DropListItem(item.alias, item.value, this.hide)
             dropListTemplate.children.push({
                 component: dropListItem
@@ -90,6 +104,7 @@ export default class SelectBox extends Base {
 
         display.onclick = function (e) {
             e.stopPropagation();
+            if (that.disabled) return;
             if (that.isShow) {
                 that.hide();
             } else {
@@ -102,6 +117,7 @@ export default class SelectBox extends Base {
             that.hide();
         });
         this.dropList = dropList;
+        this.display = display;
         return root;
     }
 
@@ -113,5 +129,15 @@ export default class SelectBox extends Base {
     show() {
         this.dropList.classList.remove('hide');
         this.isShow = true;
+    }
+
+    setDisable() {
+        this.disabled = true;
+        this.ref.classList.add('disabled');
+    }
+
+    cancelDisable() {
+        this.disabled = false;
+        this.ref.classList.remove('disabled');
     }
 }
