@@ -14,7 +14,7 @@ export default class SingleWebGL {
         let canvas = document.createElement('canvas');
         canvas.width = width;
         canvas.height = height;
-        let gl = canvas.getContext('webgl2', {
+        let gl = canvas.getContext('webgl', {
             premultipliedAlpha: false
         });
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);

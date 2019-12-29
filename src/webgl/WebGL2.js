@@ -14,7 +14,7 @@ export default class RenderContext {
      * @param {HTMLCanvasElement} canvas 
      */
     constructor(canvas) {
-        let gl = canvas.getContext('webgl2', {
+        let gl = canvas.getContext('webgl', {
             premultipliedAlpha: false
         });
         let offCanvas = new SingleWebGL(80, 50);
